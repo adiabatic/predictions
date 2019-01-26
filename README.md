@@ -23,6 +23,7 @@ An example file:
 ```yaml
 ---
 title: Predictions for 2019
+scope: for 2019
 salt: kkjskvjsdwolvkjsjv
 totally private notes: >
   `predictions` doesn’t complain if you
@@ -57,6 +58,10 @@ The title of the file full of predictions.
 A per-file salt used for hashing sensitive predictions.
 
 See “Salt-and-hash rationale” below for why you might want to do this.
+
+#### `scope` (not yet implemented)
+
+This restricts the scope of predictions to a particular domain. The idea of scopes is that they’re one-per-file so one can combine, say, 2018 predictions, 2019 predictions, and 2020 predictions in an invocation of `predictions` and see combined results with each year’s prediction labeled as such.
 
 #### `tag order` (not yet implemented)
 
