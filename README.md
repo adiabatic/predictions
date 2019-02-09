@@ -51,7 +51,7 @@ notes: Left Acme on January 14. Go figure.
 
 The title of the file full of predictions.
 
-#### `salt` (not yet implemented)
+#### `salt` (per-document) (not yet implemented)
 
 A per-file salt used for hashing sensitive predictions.
 
@@ -95,7 +95,7 @@ A boolean. If true, then this entry is hashed before going to a publicly-display
 
 Uses a per-prediction salt if it exists. If it doesn’t, then it’ll fall back to the whole-file salt specified in the metadata document. If that doesn’t exist either, then the claim will be unsalted when published.
 
-#### `salt` (not yet implemented)
+#### `salt` (per-prediction) (not yet implemented)
 
 A per-prediction salt used for hashing sensitive predictions. If `salt` is specified in a prediction, then `hash` is implied.
 
