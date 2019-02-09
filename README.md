@@ -135,3 +135,7 @@ Why salt? Because if Dennis or his friends have a lot of free time, they could t
 ## Unresolved questions
 
 Should I encourage users to use YAML 1.1-only features like yes/no/on/off/~? in 1.2, only true/false/null are allowed.
+
+## Build instructions
+
+- `go get gopkg.in/yaml.v2`
