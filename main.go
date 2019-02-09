@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/davecgh/go-spew/spew"
+	"github.com/pkg/errors"
 	"gopkg.in/yaml.v2"
 )
 
@@ -37,18 +38,14 @@ type PredictionDocument struct {
 	Notes      string
 }
 
-func main() {
-	// no flags to parse yet, but we need to do this to make flag.Args() work
-
-	flag.Parse()
-
+// StreamsFromFiles generates a slice of Stream from the filenames specified.
+func StreamsFromFiles(filenames []string) ([]Stream, error) {
 	streams := make([]Stream, 0, 1)
 
-	for _, fn := range flag.Args() {
+	for _, fn := range filenames {
 		f, err := os.Open(fn)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "couldn’t open file named “%v”: %v\n", fn, err)
-			os.Exit(1)
+			return nil, errors.WithMessagef(err, "couldn’t open file named “%v”", fn)
 		}
 		defer f.Close()
 
@@ -59,8 +56,7 @@ func main() {
 
 		err = dec.Decode(&md)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "error while decoding metadata document of “%v”: %v\n", fn, err)
-			os.Exit(2)
+			return nil, errors.WithMessagef(err, "error while decoding metadata document in file “%v”", fn)
 		}
 
 		s.Metadata = md
@@ -74,21 +70,33 @@ func main() {
 			pds = append(pds, pd)
 		}
 		if err != io.EOF {
-			if len(pds) >= 1 {
-				knownGoodPrediction := pds[len(pds)-1]
-				fmt.Fprintf(os.Stderr,
-					"error reading the prediction after the one with the claim “%v”: %v\n",
-					knownGoodPrediction.Claim,
-					err,
-				)
-			} else {
-				fmt.Fprintln(os.Stderr, "error reading the first prediction: ", err)
+			if len(pds) == 0 {
+				return nil, errors.WithMessagef(err, "error reading the first prediction")
 			}
-			os.Exit(3)
+
+			knownGoodPrediction := pds[len(pds)-1]
+			return nil, errors.WithMessagef(err,
+				"error reading the prediction after the one with the following claim: “%v”",
+				knownGoodPrediction.Claim,
+			)
 		}
 
 		s.Predictions = pds
 		streams = append(streams, s)
+	}
+
+	return streams, nil
+}
+
+func main() {
+	// no flags to parse yet, but we need to do this to make flag.Args() work
+
+	flag.Parse()
+
+	streams, err := StreamsFromFiles(flag.Args())
+	if err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
 	}
 
 	fmt.Println("the streams:")
