@@ -33,6 +33,7 @@ type PredictionDocument struct {
 	Tags       []string
 	Happened   *bool
 	Hash       bool
+	Salt       string
 	Notes      string
 }
 
