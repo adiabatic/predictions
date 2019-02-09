@@ -15,8 +15,8 @@ If not otherwise specified, the assumed scope for all these claims is “in the 
 - I will write at least 300 diary entries
 - I will meditate at least 300 times
 - I will try this new diet
-- I will try this new diet, and stick with it for at two weeks straight
-- I will try this new diet, and stick with it for four weeks straight
+- I will try this new diet, and stick with it for at least two weeks straight
+- I will try this new diet, and stick with it for at least four weeks straight
 
 ## Purchases
 
