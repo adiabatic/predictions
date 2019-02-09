@@ -7,7 +7,6 @@ Not sure what this whole ‘predictions’ thing is? Have a look at [Scott Alexa
 [yaml]: https://en.wikipedia.org/wiki/YAML "YAML Ain’t Markup Language"
 [ssc2018]: https://slatestarcodex.com/2019/01/22/2018-predictions-calibration-results/
 
-
 ## Usage
 
 `predictions [options] inputfile`
@@ -45,7 +44,6 @@ happened: no
 hash: yes
 notes: Left Acme on January 14. Go figure.
 ```
-
 
 ### Metadata-document mapping keys
 
