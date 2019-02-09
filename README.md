@@ -132,9 +132,9 @@ Of course, you could never reveal the claim text and the hash if you so choose. 
 
 Why salt? Because if Dennis or his friends have a lot of free time, they could type a bunch of guesses for your predictions into their computers and generate hashes for them. If Dennis manages to guess your exact wording for any of your hashed secret claims, they won’t be secret anymore. Guessing your exact wording plus a bunch of random letters and/or numbers and/or punctuation in a salt? That’s pretty much close to impossible.
 
-## Unresolved questions
+## Looming annoyances
 
-Should I encourage users to use YAML 1.1-only features like yes/no/on/off/~? in 1.2, only true/false/null are allowed.
+`gopkg.in/yaml.v2` supports YAML 1.1-only features like yes/no/on/off/~, even in assumed-to-be-YAML-1.2 documents. `v3` will correct this error. Should I encourage users to avoid yes/no/on/off/~?
 
 ## Build instructions
 
