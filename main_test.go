@@ -16,14 +16,16 @@ claim: I will park my car straight at the gym today
 confidence: 60
 `
 
+// This is called table-driven testing, isn’t it?
+
+type KeyValueTable []KeyValueRow
+
 type KeyValueRow struct {
 	Key string
 
 	ExpectedValue string
 	ActualValue   string
 }
-
-type KeyValueTable []KeyValueRow
 
 func TestMetadata(t *testing.T) {
 	r := strings.NewReader(simpleStream)
@@ -32,8 +34,6 @@ func TestMetadata(t *testing.T) {
 	if err != nil {
 		t.Fatalf("unexpected error in StreamFromReader: %v", err)
 	}
-
-	// Taking table-driven testing pretty literally
 
 	table := []KeyValueRow{
 		{
