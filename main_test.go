@@ -16,6 +16,15 @@ claim: I will park my car straight at the gym today
 confidence: 60
 `
 
+type KeyValueRow struct {
+	Key string
+
+	ExpectedValue string
+	ActualValue   string
+}
+
+type KeyValueTable []KeyValueRow
+
 func TestMetadata(t *testing.T) {
 	r := strings.NewReader(simpleStream)
 
@@ -24,27 +33,21 @@ func TestMetadata(t *testing.T) {
 		t.Fatalf("unexpected error in StreamFromReader: %v", err)
 	}
 
-	type Row struct {
-		Key string
+	// Taking table-driven testing pretty literally
 
-		ExpectedValue string
-		ActualValue   string
-	}
-
-	type Table []Row
-
-	table := []Row{
-		Row{
+	table := []KeyValueRow{
+		{
 			Key:           "title",
 			ExpectedValue: "test stream",
 			ActualValue:   s.Metadata.Title,
 		},
-		Row{
+		{
 			Key:           "scope",
 			ExpectedValue: "in the year 2000",
 			ActualValue:   s.Metadata.Scope,
 		},
 	}
+
 	for _, row := range table {
 		name := fmt.Sprintf("Ensure that %v is filled correctly", row.Key)
 		t.Run(name, func(t *testing.T) {
@@ -55,14 +58,5 @@ func TestMetadata(t *testing.T) {
 				)
 			}
 		})
-	}
-
-	expectedTitle := "test stream"
-	actualTitle := s.Metadata.Title
-	if actualTitle != expectedTitle {
-		t.Errorf("Metadata title mismatch. Expected “%v”; got “%v”",
-			expectedTitle,
-			actualTitle,
-		)
 	}
 }
