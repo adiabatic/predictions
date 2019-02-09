@@ -38,6 +38,45 @@ type PredictionDocument struct {
 	Notes      string
 }
 
+// StreamFromReader decodes into a Stream from an io.Reader.
+func StreamFromReader(r io.Reader) (Stream, error) {
+	dec := yaml.NewDecoder(r)
+	var s Stream
+	var md MetadataDocument
+	var pds []PredictionDocument
+
+	err := dec.Decode(&md)
+	if err != nil {
+		return Stream{}, errors.WithMessage(err, "error while decoding metadata document")
+	}
+
+	s.Metadata = md
+
+	for {
+		var pd PredictionDocument
+		err = dec.Decode(&pd)
+		if err != nil {
+			break
+		}
+		pds = append(pds, pd)
+	}
+	if err != io.EOF {
+		if len(pds) == 0 {
+			return Stream{}, errors.WithMessagef(err, "error reading the first prediction")
+		}
+
+		knownGoodPrediction := pds[len(pds)-1]
+		return Stream{}, errors.WithMessagef(err,
+			"error reading the prediction after the one with the following claim: “%v”",
+			knownGoodPrediction.Claim,
+		)
+	}
+
+	s.Predictions = pds
+
+	return s, nil
+}
+
 // StreamsFromFiles generates a slice of Stream from the filenames specified.
 func StreamsFromFiles(filenames []string) ([]Stream, error) {
 	streams := make([]Stream, 0, 1)
@@ -49,39 +88,11 @@ func StreamsFromFiles(filenames []string) ([]Stream, error) {
 		}
 		defer f.Close()
 
-		dec := yaml.NewDecoder(f)
-		var s Stream
-		var md MetadataDocument
-		var pds []PredictionDocument
-
-		err = dec.Decode(&md)
+		s, err := StreamFromReader(f)
 		if err != nil {
-			return nil, errors.WithMessagef(err, "error while decoding metadata document in file “%v”", fn)
+			return nil, errors.WithMessagef(err, "couldn’t make stream from file “%v”", fn)
 		}
 
-		s.Metadata = md
-
-		for {
-			var pd PredictionDocument
-			err = dec.Decode(&pd)
-			if err != nil {
-				break
-			}
-			pds = append(pds, pd)
-		}
-		if err != io.EOF {
-			if len(pds) == 0 {
-				return nil, errors.WithMessagef(err, "error reading the first prediction")
-			}
-
-			knownGoodPrediction := pds[len(pds)-1]
-			return nil, errors.WithMessagef(err,
-				"error reading the prediction after the one with the following claim: “%v”",
-				knownGoodPrediction.Claim,
-			)
-		}
-
-		s.Predictions = pds
 		streams = append(streams, s)
 	}
 
