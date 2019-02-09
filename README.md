@@ -139,3 +139,4 @@ Should I encourage users to use YAML 1.1-only features like yes/no/on/off/~? in 
 ## Build instructions
 
 - `go get gopkg.in/yaml.v2`
+- `go get github.com/davecgh/go-spew/spew`
