@@ -60,3 +60,14 @@ func TestMetadata(t *testing.T) {
 		})
 	}
 }
+
+const nullStream = ``
+
+func TestNullStream(t *testing.T) {
+	expectedError := NeitherTitleNorScopeInMetadataBlock
+	_, actualError := StreamFromReader(strings.NewReader(nullStream))
+	if actualError != expectedError {
+		t.Fatalf("unexpected error from a null stream. expected: %v; got: %v", expectedError, actualError)
+	}
+
+}

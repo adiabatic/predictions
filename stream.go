@@ -8,6 +8,16 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// A StreamValidationError is returned when something about the stream isn’t right.
+type StreamValidationError string
+
+func (e StreamValidationError) Error() string { return string(e) }
+
+// Various errors returned when decoding documents out of a stream and into structs.
+const (
+	NeitherTitleNorScopeInMetadataBlock = StreamValidationError("Neither title nor scope in metadata block")
+)
+
 // A Stream (YAML stream) contains a metadata document and predictions documents.
 //
 // In YAML, documents are prefixed by “---”.
@@ -44,6 +54,9 @@ func StreamFromReader(r io.Reader) (Stream, error) {
 
 	err := dec.Decode(&md)
 	if err != nil {
+		if err == io.EOF {
+			return Stream{}, NeitherTitleNorScopeInMetadataBlock
+		}
 		return Stream{}, errors.WithMessage(err, "error while decoding metadata document")
 	}
 
@@ -105,7 +118,7 @@ type StreamValidator struct{}
 // HasTitleOrScopeInMetadataBlock ensures that a stream has either title key or a scope key in the metadata block (or both). At least one of those keys’ values must be something other than the empty string.
 func (sv *StreamValidator) HasTitleOrScopeInMetadataBlock(s Stream) error {
 	if s.Metadata.Title == "" || s.Metadata.Scope == "" {
-		return errors.New("neither title nor scope in metadata document")
+		return NeitherTitleNorScopeInMetadataBlock
 	}
 	return nil
 }
