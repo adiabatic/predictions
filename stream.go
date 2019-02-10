@@ -3,6 +3,7 @@ package main
 import (
 	"io"
 	"os"
+	"strings"
 
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
@@ -120,5 +121,61 @@ func (sv *StreamValidator) HasTitleOrScopeInMetadataBlock(s Stream) error {
 	if s.Metadata.Title == "" || s.Metadata.Scope == "" {
 		return NeitherTitleNorScopeInMetadataBlock
 	}
+	return nil
+}
+
+// A NoClaimError is returned when a prediction has no claim in it.
+type NoClaimError struct {
+	PreviousClaim string
+}
+
+func (e NoClaimError) Error() string {
+	if e.PreviousClaim != "" {
+		return "Prediction after “" + e.PreviousClaim + "” has no claim in it"
+	}
+	return "A prediction has no claim in it (possibly the first)"
+}
+
+// A NoClaimErrors is a slice of NoClaimError. Some streams will miss a bunch of claims.
+type NoClaimErrors []NoClaimError
+
+func (es NoClaimErrors) Error() string {
+	sb := strings.Builder{}
+	sb.WriteString("No-claim errors: ")
+
+	for _, e := range es {
+		sb.WriteString(e.Error())
+		sb.WriteString(", ")
+	}
+
+	return sb.String()
+}
+
+// AllPredictionsHaveClaims ensures that all predictions in a stream have one claim in each.
+func (sv *StreamValidator) AllPredictionsHaveClaims(s Stream) error {
+	errs := make([]NoClaimError, 0)
+
+	for i, prediction := range s.Predictions {
+		if prediction.Claim == "" {
+			if i == 0 {
+				errs = append(errs, NoClaimError{})
+			} else {
+				errs = append(errs, NoClaimError{s.Predictions[i-1].Claim})
+			}
+		}
+	}
+
+	return NoClaimErrors(errs)
+}
+
+// A NoConfidenceError is returned when one or more predictions in a stream doesn’t have an associated confidence level.
+type NoConfidenceError struct {
+	Claims []string
+}
+
+func (e NoConfidenceError) Error() string { return "Some claims lack confidence" }
+
+// AllPredictionsHaveConfidences ensures that all predictions have a confidence key and a value of some sort.
+func (sv *StreamValidator) AllPredictionsHaveConfidences(s Stream) error {
 	return nil
 }
