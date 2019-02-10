@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/adiabatic/predictions/stream"
 	"github.com/davecgh/go-spew/spew"
 )
 
@@ -13,7 +14,7 @@ func main() {
 
 	flag.Parse()
 
-	streams, err := StreamsFromFiles(flag.Args())
+	streams, err := stream.StreamsFromFiles(flag.Args())
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)

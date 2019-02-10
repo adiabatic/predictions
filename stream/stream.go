@@ -1,4 +1,4 @@
-package main
+package stream
 
 import (
 	"io"
@@ -9,14 +9,14 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
-// A StreamValidationError is returned when something about the stream isn’t right.
-type StreamValidationError string
+// A ValidationError is returned when something about the stream isn’t right.
+type ValidationError string
 
-func (e StreamValidationError) Error() string { return string(e) }
+func (e ValidationError) Error() string { return string(e) }
 
 // Various errors returned when decoding documents out of a stream and into structs.
 const (
-	NeitherTitleNorScopeInMetadataBlock = StreamValidationError("Neither title nor scope in metadata block")
+	NeitherTitleNorScopeInMetadataBlock = ValidationError("Neither title nor scope in metadata block")
 )
 
 // A Stream (YAML stream) contains a metadata document and predictions documents.
@@ -46,8 +46,8 @@ type PredictionDocument struct {
 	Notes      string
 }
 
-// StreamFromReader decodes into a Stream from an io.Reader.
-func StreamFromReader(r io.Reader) (Stream, error) {
+// FromReader decodes into a Stream from an io.Reader.
+func FromReader(r io.Reader) (Stream, error) {
 	dec := yaml.NewDecoder(r)
 	var s Stream
 	var md MetadataDocument
@@ -99,7 +99,7 @@ func StreamsFromFiles(filenames []string) ([]Stream, error) {
 		}
 		defer f.Close()
 
-		s, err := StreamFromReader(f)
+		s, err := FromReader(f)
 		if err != nil {
 			return nil, errors.WithMessagef(err, "couldn’t make stream from file “%v”", fn)
 		}
@@ -110,14 +110,14 @@ func StreamsFromFiles(filenames []string) ([]Stream, error) {
 	return streams, nil
 }
 
-// A StreamValidationFunction ensures that a Stream passes a sanity check.
-type StreamValidationFunction func(Stream) error
+// A ValidationFunction ensures that a Stream passes a sanity check.
+type ValidationFunction func(Stream) error
 
-// A StreamValidator contains data useful for StreamValidationFunctions.
-type StreamValidator struct{}
+// A Validator contains data useful for ValidationFunctions.
+type Validator struct{}
 
 // HasTitleOrScopeInMetadataBlock ensures that a stream has either title key or a scope key in the metadata block (or both). At least one of those keys’ values must be something other than the empty string.
-func (sv *StreamValidator) HasTitleOrScopeInMetadataBlock(s Stream) error {
+func (sv *Validator) HasTitleOrScopeInMetadataBlock(s Stream) error {
 	if s.Metadata.Title == "" || s.Metadata.Scope == "" {
 		return NeitherTitleNorScopeInMetadataBlock
 	}
@@ -152,7 +152,7 @@ func (es NoClaimErrors) Error() string {
 }
 
 // AllPredictionsHaveClaims ensures that all predictions in a stream have one claim in each.
-func (sv *StreamValidator) AllPredictionsHaveClaims(s Stream) error {
+func (sv *Validator) AllPredictionsHaveClaims(s Stream) error {
 	errs := make([]NoClaimError, 0)
 
 	for i, prediction := range s.Predictions {
@@ -176,6 +176,6 @@ type NoConfidenceError struct {
 func (e NoConfidenceError) Error() string { return "Some claims lack confidence" }
 
 // AllPredictionsHaveConfidences ensures that all predictions have a confidence key and a value of some sort.
-func (sv *StreamValidator) AllPredictionsHaveConfidences(s Stream) error {
+func (sv *Validator) AllPredictionsHaveConfidences(s Stream) error {
 	return nil
 }

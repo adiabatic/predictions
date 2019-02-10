@@ -1,4 +1,4 @@
-package main
+package stream
 
 import (
 	"fmt"
@@ -30,9 +30,9 @@ type KeyValueRow struct {
 func TestMetadata(t *testing.T) {
 	r := strings.NewReader(simpleStream)
 
-	s, err := StreamFromReader(r)
+	s, err := FromReader(r)
 	if err != nil {
-		t.Fatalf("unexpected error in StreamFromReader: %v", err)
+		t.Fatalf("unexpected error in FromReader: %v", err)
 	}
 
 	table := []KeyValueRow{
@@ -65,9 +65,17 @@ const nullStream = ``
 
 func TestNullStream(t *testing.T) {
 	expectedError := NeitherTitleNorScopeInMetadataBlock
-	_, actualError := StreamFromReader(strings.NewReader(nullStream))
+	_, actualError := FromReader(strings.NewReader(nullStream))
 	if actualError != expectedError {
 		t.Fatalf("unexpected error from a null stream. expected: %v; got: %v", expectedError, actualError)
 	}
+}
 
+const stringNotMappingMetadata = `---
+title yum
+scope: in the year 2000`
+
+func TestNoMappingInMetadata(t *testing.T) {
+	_, actualError := FromReader(strings.NewReader(stringNotMappingMetadata))
+	t.Fatal(actualError)
 }
