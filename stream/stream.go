@@ -23,8 +23,9 @@ const (
 //
 // In YAML, documents are prefixed by “---”.
 type Stream struct {
-	Metadata    MetadataDocument
-	Predictions []PredictionDocument
+	FromFilename string
+	Metadata     MetadataDocument
+	Predictions  []PredictionDocument
 }
 
 // A MetadataDocument contains information about the predictions in its Stream.
@@ -46,12 +47,13 @@ type PredictionDocument struct {
 	Notes      string
 }
 
-// FromReader decodes into a Stream from an io.Reader.
-func FromReader(r io.Reader) (Stream, error) {
+func fromReaderWithFilename(r io.Reader, filename string) (Stream, error) {
 	dec := yaml.NewDecoder(r)
 	var s Stream
 	var md MetadataDocument
 	var pds []PredictionDocument
+
+	s.FromFilename = filename
 
 	err := dec.Decode(&md)
 	if err != nil {
@@ -88,6 +90,11 @@ func FromReader(r io.Reader) (Stream, error) {
 	return s, nil
 }
 
+// FromReader decodes into a Stream from an io.Reader.
+func FromReader(r io.Reader) (Stream, error) {
+	return fromReaderWithFilename(r, "")
+}
+
 // StreamsFromFiles generates a slice of Stream from the filenames specified.
 func StreamsFromFiles(filenames []string) ([]Stream, error) {
 	streams := make([]Stream, 0, 1)
@@ -99,7 +106,7 @@ func StreamsFromFiles(filenames []string) ([]Stream, error) {
 		}
 		defer f.Close()
 
-		s, err := FromReader(f)
+		s, err := fromReaderWithFilename(f, fn)
 		if err != nil {
 			return nil, errors.WithMessagef(err, "couldn’t make stream from file “%v”", fn)
 		}
