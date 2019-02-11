@@ -4,8 +4,6 @@ import (
 	"fmt"
 	"strings"
 	"testing"
-
-	"github.com/davecgh/go-spew/spew"
 )
 
 // YAML strings must be at the top level of indentation. goimports will indent raw-string blocks in functions, adding tabs to most lines inside the string that we cannot handle.
@@ -101,16 +99,6 @@ claims: [I will eat ice cream this week, I will eat peanut-butter cups this week
 ---
 # missing everything, and its predecessor is missing a “claim”
 `
-
-func TestMissingClaimsAndConfidences(t *testing.T) {
-	s, err := FromReader(strings.NewReader(missingClaimsAndPredictions))
-	if err != nil {
-		t.Fatal("FromReader should at least work")
-	}
-	var sv Validator
-	errs := sv.RunAll(s)
-	spew.Println(errs)
-}
 
 func Example_missingClaimsAndConfidences() {
 	s, err := FromReader(strings.NewReader(missingClaimsAndPredictions))
