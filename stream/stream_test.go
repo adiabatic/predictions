@@ -93,10 +93,10 @@ confidence: 70
 claim: I will eat a steak this week
 # totally missing confidence
 ---
-claim: I will eat a salad this week
+claim: I will eat a dinner salad this week
 confidence: null
 ---
-# technically missing “claim”, too
+# missing both claim and confidence (“claims” doesn’t count)
 claims: [I will eat ice cream this week, I will eat peanut-butter cups this week]
 ---
 # missing everything, and its predecessor is missing a “claim”
@@ -119,7 +119,15 @@ func Example_missingClaimsAndConfidences() {
 	}
 	var sv Validator
 	errs := sv.RunAll(s)
-	spew.Dump(errs)
+	for _, err := range errs {
+		fmt.Println(err)
+	}
 
-	// Output: definitely not it
+	// Unordered output:
+	// Prediction after “I will eat a dinner salad this week” has no claim in it
+	// A prediction has no claim in it. Either it’s the first prediction or the prediction before it doesn’t have a claim in it, either
+	// Prediction with claim “I will eat a steak this week” has no declared confidence
+	// Prediction with claim “I will eat a dinner salad this week” has no declared confidence
+	// Prediction after prediction with claim “I will eat a dinner salad this week” has no declared confidence
+	// A prediction exists that lacks both a confidence and a claim, and its predecessor lacks a claim too
 }
