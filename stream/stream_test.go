@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 	"testing"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 // YAML strings must be at the top level of indentation. goimports will indent raw-string blocks in functions, adding tabs to most lines inside the string that we cannot handle.
@@ -71,11 +73,53 @@ func TestNullStream(t *testing.T) {
 	}
 }
 
-const stringNotMappingMetadata = `---
+const nonMapMetadata = `---
 title yum
 scope: in the year 2000`
 
-func TestNoMappingInMetadata(t *testing.T) {
-	_, actualError := FromReader(strings.NewReader(stringNotMappingMetadata))
-	t.Fatal(actualError)
+func TestMetadataIsAMap(t *testing.T) {
+	_, actualError := FromReader(strings.NewReader(nonMapMetadata))
+	if actualError == nil {
+		t.Fatal("a metadata document should fail if it’s not a proper mapping")
+	}
+}
+
+const missingClaimsAndPredictions = `---
+title: Comestibles prognostication
+---
+claim: I will eat a chocolate bar this week
+confidence: 70
+---
+claim: I will eat a steak this week
+# totally missing confidence
+---
+claim: I will eat a salad this week
+confidence: null
+---
+# technically missing “claim”, too
+claims: [I will eat ice cream this week, I will eat peanut-butter cups this week]
+---
+# missing everything, and its predecessor is missing a “claim”
+`
+
+func TestMissingClaimsAndConfidences(t *testing.T) {
+	s, err := FromReader(strings.NewReader(missingClaimsAndPredictions))
+	if err != nil {
+		t.Fatal("FromReader should at least work")
+	}
+	var sv Validator
+	errs := sv.RunAll(s)
+	spew.Println(errs)
+}
+
+func Example_missingClaimsAndConfidences() {
+	s, err := FromReader(strings.NewReader(missingClaimsAndPredictions))
+	if err != nil {
+		panic("FromReader should at least work")
+	}
+	var sv Validator
+	errs := sv.RunAll(s)
+	spew.Dump(errs)
+
+	// Output: definitely not it
 }

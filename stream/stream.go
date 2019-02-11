@@ -1,9 +1,9 @@
 package stream
 
 import (
+	"fmt"
 	"io"
 	"os"
-	"strings"
 
 	"github.com/pkg/errors"
 	yaml "gopkg.in/yaml.v2"
@@ -111,17 +111,42 @@ func StreamsFromFiles(filenames []string) ([]Stream, error) {
 }
 
 // A ValidationFunction ensures that a Stream passes a sanity check.
-type ValidationFunction func(Stream) error
+//
+// Because many things can go wrong in a Stream that a user would want to know about all at once, ValidationFunction returns a slice of error.
+type ValidationFunction func(Stream) []error
 
 // A Validator contains data useful for ValidationFunctions.
 type Validator struct{}
 
-// HasTitleOrScopeInMetadataBlock ensures that a stream has either title key or a scope key in the metadata block (or both). At least one of those keys’ values must be something other than the empty string.
-func (sv *Validator) HasTitleOrScopeInMetadataBlock(s Stream) error {
-	if s.Metadata.Title == "" || s.Metadata.Scope == "" {
-		return NeitherTitleNorScopeInMetadataBlock
+// RunValidationFunctions runs a bunch of validation functions on a stream.
+//
+// It returns a slice of error of everything that didn’t pass muster.
+func (sv *Validator) RunValidationFunctions(s Stream, vfs ...ValidationFunction) []error {
+	errs := make([]error, 0)
+	for _, f := range vfs {
+		ferrs := f(s)
+		errs = append(errs, ferrs...)
 	}
-	return nil
+
+	return errs
+}
+
+// RunAll is a convenience function to run all known stream validators.
+func (sv *Validator) RunAll(s Stream) []error {
+	return sv.RunValidationFunctions(s,
+		sv.HasTitleOrScopeInMetadataBlock,
+		sv.AllPredictionsHaveClaims,
+		sv.AllPredictionsHaveConfidences,
+	)
+}
+
+// HasTitleOrScopeInMetadataBlock ensures that a stream has either title key or a scope key in the metadata block (or both). At least one of those keys’ values must be something other than the empty string.
+func (sv *Validator) HasTitleOrScopeInMetadataBlock(s Stream) []error {
+	errs := make([]error, 0)
+	if s.Metadata.Title == "" || s.Metadata.Scope == "" {
+		return append(errs, NeitherTitleNorScopeInMetadataBlock)
+	}
+	return errs
 }
 
 // A NoClaimError is returned when a prediction has no claim in it.
@@ -136,24 +161,9 @@ func (e NoClaimError) Error() string {
 	return "A prediction has no claim in it (possibly the first)"
 }
 
-// A NoClaimErrors is a slice of NoClaimError. Some streams will miss a bunch of claims.
-type NoClaimErrors []NoClaimError
-
-func (es NoClaimErrors) Error() string {
-	sb := strings.Builder{}
-	sb.WriteString("No-claim errors: ")
-
-	for _, e := range es {
-		sb.WriteString(e.Error())
-		sb.WriteString(", ")
-	}
-
-	return sb.String()
-}
-
 // AllPredictionsHaveClaims ensures that all predictions in a stream have one claim in each.
-func (sv *Validator) AllPredictionsHaveClaims(s Stream) error {
-	errs := make([]NoClaimError, 0)
+func (sv *Validator) AllPredictionsHaveClaims(s Stream) []error {
+	errs := make([]error, 0)
 
 	for i, prediction := range s.Predictions {
 		if prediction.Claim == "" {
@@ -165,17 +175,25 @@ func (sv *Validator) AllPredictionsHaveClaims(s Stream) error {
 		}
 	}
 
-	return NoClaimErrors(errs)
+	return errs
 }
 
 // A NoConfidenceError is returned when one or more predictions in a stream doesn’t have an associated confidence level.
 type NoConfidenceError struct {
-	Claims []string
+	Claim         string
+	PreviousClaim string
 }
 
-func (e NoConfidenceError) Error() string { return "Some claims lack confidence" }
+func (e NoConfidenceError) Error() string {
+	if e.Claim != "" {
+		return fmt.Sprintf("Prediction with claim “%v” has no declared confidence", e.Claim)
+	} else if e.PreviousClaim != "" {
+		return fmt.Sprintf("Prediction after claim “%v” has no declared confidence", e.Claim)
+	}
+	return "A prediction exists that lacks both a confidence and a claim, and its predecessor lacks a claim too"
+}
 
 // AllPredictionsHaveConfidences ensures that all predictions have a confidence key and a value of some sort.
-func (sv *Validator) AllPredictionsHaveConfidences(s Stream) error {
+func (sv *Validator) AllPredictionsHaveConfidences(s Stream) []error {
 	return nil
 }
