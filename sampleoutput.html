@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang='en-US'>
+<head>
+	<meta charset='UTF-8'>
+	<title>Sample Output</title>
+	<style>
+		html {
+		    font-family: system-ui, sans-serif;
+			--radius: 1rem;
+			--border-style-internal: thin dotted gray;
+		}
+
+		section {
+			padding: 0 .5rem;
+		}
+		
+		.document {
+            display: grid;
+			
+			/* percent, claim, result, tags, notes */
+			grid-template:
+				'p c'
+				'r t'
+				'r n'
+				/ 15ch 1fr;
+			box-shadow: 0px 0px 37px 0px black;
+			border-radius: var(--radius);
+		}
+
+		.document > * {
+			background: #eee;
+			padding: .25rem;
+		}
+
+		.percent {
+			grid-area: p;
+			font-size: 300%;
+			font-weight: 900;
+			text-align: center;
+			border-top-left-radius: var(--radius);
+
+			border-bottom: var(--border-style-internal);
+			border-right: var(--border-style-internal);
+		}
+
+		.percent > div {
+			padding-bottom: .5rem;
+		}
+
+		.claim {
+			grid-area: c;
+			font-size: 200%;
+
+			border-top-right-radius: var(--radius);
+			border-bottom: var(--border-style-internal);
+		}
+
+		.result {
+			grid-area: r;
+
+			border-bottom-left-radius: var(--radius);
+			border-right: var(--border-style-internal);
+		}
+
+		.result.true {
+			background: hsl(120, 50%, 90%);
+			color: hsl(120, 50%, 50%);
+		}
+
+		.tags {
+			grid-area: t;
+			color: #666;
+
+			border-bottom: var(--border-style-internal);
+
+		}
+
+		.notes {
+			grid-area: n;
+			border-bottom-right-radius: var(--radius);
+		}
+
+		.center-child {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		
+	</style>
+</head>
+<body>
+<h1>Predictions for in 2019</h1>
+
+<section>
+    <h1>spatial awareness</h1>
+	<div class='document'>
+		<div class='percent center-child'><div>80%</div></div>
+		<div class='claim center-child'><div>I will park straight in the space when I get to work on 2019-02-11</div></div>
+		<div class='result true center-child'><div>called it</div></div>
+		<div class='tags'>Other tags: driving, perfectionism, early-morning sapience</div>
+		<div class='notes'>I managed to be off by only 1.3° and had a mean offset of 2⅝″.</div>
+	</div>
+</section>
+</body>
+</html>
