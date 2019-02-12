@@ -89,6 +89,14 @@ If some, but not all, of your predictions have tags, the untagged ones will be t
 
 Either a boolean (yes/no/true/false) or null (~). Use yes/true for something that did happen, no/false for something that definitely didn’t happen, and ~ for weird ambiguous results that you want to throw out of any analysis.
 
+#### `cause for exclusion` (name subject to change)
+
+A string. Put any explanation you want in it.
+
+Some predictions don’t pan out the way you predict, and, of those, some just _go weird_. If a prediction has a `cause for exclusion` in it, that prediction won’t be included in calculations of your accuracy.
+
+When would you use something like this? Suppose you have months of predictions for something like “I will park straight in a space when I get to work”, one per day. What would you write down if you had to parallel-park one day (it was super crowded) or you had to call in sick and didn’t drive there at all? A `cause for exclusion` will let you exclude a prediction from all the analysis yet still let you keep a record of having made the prediction.
+
 #### `hash` (not yet implemented)
 
 A boolean. If true, then this entry is hashed before going to a publicly-displayed output.
