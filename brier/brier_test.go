@@ -114,3 +114,29 @@ func TestKindaThoughtItWouldNotRainButItDidAnyway(t *testing.T) {
 		t.Fatalf("expected score: %v; got: %v", expectedScore, actualScore)
 	}
 }
+
+const howGoodAmIAtKnowingMyOwnCooking = `
+scope: today
+---
+claim: I will like the dinner I just made
+confidence: 70
+happened: true
+tags: [food]
+---
+claim: I will like the new Brian Eno album I just bought
+confidence: 99
+happened: false
+tags: [music]
+`
+
+func TestMatchingTag(t *testing.T) {
+	ss := mustStreams(howGoodAmIAtKnowingMyOwnCooking)
+
+	const expectedScore = 0.09
+
+	actualScore := ForOnly(ss, MatchingTag("food"))
+	if !closeEnough(actualScore, expectedScore) {
+		t.Fatalf("expected score: %v; got: %v", expectedScore, actualScore)
+	}
+
+}
