@@ -2,9 +2,15 @@
 //
 // Brier scores go from 0 to 1. 0 is the best score achievable, while 1 is the worst score achievable. If you put an event at the 50% confidence interval, your Brier score will be ¼ regardless of what happens. To aggregate Brier scores, add them all up and divide by how many you have, just like an arithmetic mean.
 //
-// "BS" = 1/N  ∑_(t=1)^N▒(f_t-o_t )^2
+// Here’s how to calculate the Brier score of something when only two different outcomes are possible:
 //
-// Background reading: https://en.wikipedia.org/wiki/Brier_score#Definition
+// "BS" = 1/N  ∑_(t=1)^N▒(f_t-o_t)^2
+//
+// …where f_t is the probability that was forecast (0–1, inclusive)
+//
+// …and o_t is the outcome (0 if it didn’t happen, 1 if it did)
+//
+// Prefer to read about this on Wikipedia? https://en.wikipedia.org/wiki/Brier_score#Definition
 package brier
 
 import (
@@ -16,10 +22,10 @@ import (
 // A Filter is a function that filters out predictions if the filter returns false.
 type Filter func(stream.PredictionDocument) bool
 
-// Everything is a brierFilter that always returns true.
+// Everything is a Filter that always returns true.
 func Everything(_ stream.PredictionDocument) bool { return true }
 
-// MatchingTag returns a brierFilter that returns true if the prediction’s tag matches the given tag.
+// MatchingTag returns a Filter that returns true if the prediction’s tag matches the given tag.
 func MatchingTag(tag string) Filter {
 	return func(d stream.PredictionDocument) bool {
 		for _, predictionTag := range d.Tags {
