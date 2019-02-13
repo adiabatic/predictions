@@ -52,12 +52,13 @@ func TestNailedIt(t *testing.T) {
 
 const wrongAboutEverything = `
 title: I am maximally wrong about everything
+scope: today
 ---
-claim: I will fly to Pluto and back today
+claim: I will fly to Pluto and back
 confidence: 100
 happened: false
 ---
-claim: I will jump 300 feet in the air today
+claim: I will jump 300 feet in the air
 confidence: 100
 happened: false
 `
