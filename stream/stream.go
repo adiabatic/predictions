@@ -229,3 +229,43 @@ func (sv *Validator) AllPredictionsHaveConfidences(s Stream) []error {
 	}
 	return errs
 }
+
+// A ConfidenceOutOfRange is returned when one or more predictions in a stream has a confidence that is too high or too low.
+type ConfidenceOutOfRange struct {
+	Claim         string
+	PreviousClaim string
+}
+
+// NewConfidenceOutOfRange returns a reasonable error for the location it’s found in.
+func NewConfidenceOutOfRange(predictions []PredictionDocument, i int) ConfidenceOutOfRange {
+	if predictions[i].Claim != "" {
+		return ConfidenceOutOfRange{
+			Claim: predictions[i].Claim,
+		}
+	} else if i > 0 && predictions[i-1].Claim != "" {
+		return ConfidenceOutOfRange{
+			PreviousClaim: predictions[i-1].Claim,
+		}
+	}
+	return ConfidenceOutOfRange{}
+}
+
+func (e ConfidenceOutOfRange) Error() string {
+	if e.Claim != "" {
+		return fmt.Sprintf("Prediction with claim “%v” has a too-weird confidence level", e.Claim)
+	} else if e.PreviousClaim != "" {
+		return fmt.Sprintf("Prediction after prediction with claim “%v” has a too-weird confidence level", e.PreviousClaim)
+	}
+	return "A prediction exists with a too-weird confidence level, it also doesn’t have a claim, and its predecessor lacks a claim too"
+}
+
+// AllConfidencesBetweenZeroAndOneHundredInclusive ensures all confidences are on [0, 100].
+func (sv *Validator) AllConfidencesBetweenZeroAndOneHundredInclusive(s Stream) []error {
+	errs := make([]error, 0)
+	for i, pred := range s.Predictions {
+		if pred.Confidence < 0.0 || pred.Confidence > 100.0 {
+			errs = append(errs, NewConfidenceOutOfRange(s.Predictions, i))
+		}
+	}
+	return errs
+}
