@@ -1,3 +1,10 @@
+// Package brier calculates Brier scores for slices of stream.Stream.
+//
+// Brier scores go from 0 to 1. 0 is the best score achievable, while 1 is the worst score achievable. If you put an event at the 50% confidence interval, your Brier score will be ¼ regardless of what happens. To aggregate Brier scores, add them all up and divide by how many you have, just like an arithmetic mean.
+//
+// "BS" = 1/N  ∑_(t=1)^N▒(f_t-o_t )^2
+//
+// Background reading: https://en.wikipedia.org/wiki/Brier_score#Definition
 package brier
 
 import (
