@@ -24,6 +24,7 @@ func deduplicateTags(ss []string) []string {
 	return ss[:j]
 }
 
+// TagsUsed returns a list of all tags used in the given slice of stream.Stream.
 func TagsUsed(ss []stream.Stream) []string {
 	ret := make([]string, 0)
 	for _, s := range ss {
