@@ -95,8 +95,8 @@ func main() {
 		buf := &bytes.Buffer{}
 		for _, s := range streams {
 			for _, d := range s.Predictions {
-				if d.ShouldExclude() {
-					continue
+				if d.ShouldExclude() && d.CauseForExclusion == "" {
+					continue // only print out the ones with cause
 				}
 
 				if hasTag(d, tag) {
