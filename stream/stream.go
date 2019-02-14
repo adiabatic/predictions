@@ -41,13 +41,23 @@ type MetadataDocument struct {
 
 // A PredictionDocument contains a claim, the claim’s confidence, and so on.
 type PredictionDocument struct {
-	Claim      string
-	Confidence float64
-	Tags       []string
-	Happened   *bool
-	Hash       bool
-	Salt       string
-	Notes      string
+	Claim             string
+	Confidence        float64
+	Tags              []string
+	Happened          *bool
+	CauseForExclusion string `yaml:"cause for exclusion"`
+	Hash              bool
+	Salt              string
+	Notes             string
+}
+
+// ShouldExclude returns true if the receiver should be excluded from consideration.
+func (d *PredictionDocument) ShouldExclude() bool {
+	if d.Happened == nil || d.CauseForExclusion != "" {
+		return true
+	}
+
+	return false
 }
 
 func fromReaderWithFilename(r io.Reader, filename string) (Stream, error) {
