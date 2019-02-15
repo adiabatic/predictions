@@ -153,12 +153,12 @@ func TestMissingClaims(t *testing.T) {
 
 	assert.Equal(t, len(errs), 3)
 	expecteds := []string{
-		"the first prediction has no claim",
+		"first prediction has no claim",
 		"claim after “I will like red meat” has no claim",
-		"a prediction has no claim, and neither does the one before it",
+		"prediction exists that has no claim, and neither does the one before it",
 	}
 	for i, expected := range expecteds {
-		assert.Equal(t, errs[i].Error(), expected)
+		assert.Equal(t, expected, errs[i].Error())
 	}
 
 }

@@ -55,19 +55,23 @@ func NewNoConfidenceError(s Stream, i int) error {
 }
 
 // NewNoClaimError returns an error that describes the approximate location of a prediction that has no claim.
-func NewNoClaimError(s Stream, predictionIndex int) error {
+func NewNoClaimError(s Stream, i int) error {
 	prefix := ""
 	if s.FromFilename != "" {
 		prefix = s.FromFilename + ": "
 	}
 
-	if predictionIndex > 0 {
-		previousClaim := s.Predictions[predictionIndex-1].Claim
-		if previousClaim != "" {
-			return fmt.Errorf("%vclaim after “%v” has no claim", prefix, previousClaim)
-		}
-		return fmt.Errorf("%va prediction has no claim, and neither does the one before it", prefix)
-
+	previousClaim := ""
+	if i > 0 {
+		previousClaim = s.Predictions[i-1].Claim
 	}
-	return fmt.Errorf("%vthe first prediction has no claim", prefix)
+
+	switch {
+	case i == 0:
+		return fmt.Errorf(prefix + "first prediction has no claim")
+	case previousClaim != "":
+		return fmt.Errorf(prefix+"claim after “%v” has no claim", previousClaim)
+	default:
+		return fmt.Errorf(prefix + "prediction exists that has no claim, and neither does the one before it")
+	}
 }
