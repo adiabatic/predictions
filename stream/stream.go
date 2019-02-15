@@ -170,20 +170,6 @@ func (sv *Validator) HasTitleOrScopeInMetadataBlock(s Stream) []error {
 	return errs
 }
 
-// A NoClaimError is returned when a prediction has no claim in it.
-type NoClaimError struct {
-	PreviousClaim string
-}
-
-func (e NoClaimError) Error() string {
-	if e.PreviousClaim != "" {
-		return "Prediction after “" + e.PreviousClaim + "” has no claim in it"
-	}
-	return "A prediction has no claim in it. " +
-		"Either it’s the first prediction " +
-		"or the prediction before it doesn’t have a claim in it, either"
-}
-
 // AllPredictionsHaveClaims ensures that all predictions in a stream have one claim in each.
 func (sv *Validator) AllPredictionsHaveClaims(s Stream) []error {
 	errs := make([]error, 0)
@@ -195,35 +181,6 @@ func (sv *Validator) AllPredictionsHaveClaims(s Stream) []error {
 	}
 
 	return errs
-}
-
-// A NoConfidenceError is returned when one or more predictions in a stream doesn’t have an associated confidence level.
-type NoConfidenceError struct {
-	Claim         string
-	PreviousClaim string
-}
-
-// NewNoConfidenceError returns a reasonable error for the location it’s found in.
-// func NewNoConfidenceError(predictions []PredictionDocument, i int) NoConfidenceError {
-// 	if predictions[i].Claim != "" {
-// 		return NoConfidenceError{
-// 			Claim: predictions[i].Claim,
-// 		}
-// 	} else if i > 0 && predictions[i-1].Claim != "" {
-// 		return NoConfidenceError{
-// 			PreviousClaim: predictions[i-1].Claim,
-// 		}
-// 	}
-// 	return NoConfidenceError{}
-// }
-
-func (e NoConfidenceError) Error() string {
-	if e.Claim != "" {
-		return fmt.Sprintf("Prediction with claim “%v” has no declared confidence", e.Claim)
-	} else if e.PreviousClaim != "" {
-		return fmt.Sprintf("Prediction after prediction with claim “%v” has no declared confidence", e.PreviousClaim)
-	}
-	return "A prediction exists that lacks both a confidence and a claim, and its predecessor lacks a claim too"
 }
 
 // AllPredictionsHaveConfidences ensures that all predictions have a confidence key and a value of some sort.
