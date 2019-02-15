@@ -21,6 +21,24 @@ func mustStreamFromString(t *testing.T, s string) Stream {
 	return st
 }
 
+func AssertEqualsError(t *testing.T, expected string, err error) bool {
+	t.Helper()
+	return assert.Equal(t, expected, err.Error())
+}
+
+func AssertErrorsMatch(t *testing.T, expecteds []string, errs []error) bool {
+	t.Helper()
+	ret := assert.Equal(t, len(expecteds), len(errs))
+
+	for i := range errs {
+		r := AssertEqualsError(t, expecteds[i], errs[i])
+		if r == false {
+			ret = false
+		}
+	}
+	return ret
+}
+
 // YAML strings must be at the top level of indentation. goimports will indent raw-string blocks in functions, adding tabs to most lines inside the string that we cannot handle.
 
 const simpleStream = `---
@@ -107,21 +125,24 @@ confidence: null
 # missing both claim and confidence (“claims” doesn’t count)
 claims: [I will eat ice cream, I will eat peanut-butter cups]
 ---
-# missing everything, and its predecessor is missing a “claim”
+# missing everything, and its predecessor is missing a “claim” too
 `
 
-func Example_missingClaimsAndConfidences() {
+func TestMissingClaimsAndConfidences(t *testing.T) {
 	s := mustStreamFromString(nil, missingClaimsAndConfidences)
 	var sv Validator
 	errs := sv.RunValidationFunctions(s,
 		sv.AllPredictionsHaveConfidences,
 	)
-	for _, err := range errs {
-		fmt.Println(err)
+
+	expecteds := []string{
+		"first prediction, with claim “I will eat a steak”, has no confidence level specified",
+		"prediction with claim “I will eat a dinner salad” has no confidence level specified",
+		"prediction after prediction with claim “I will eat a dinner salad” has no confidence level specified",
+		"prediction exists that has no confidence level specified; neither it nor its predecessor have a claim",
 	}
 
-	// Unordered output:
-	// not it
+	AssertErrorsMatch(t, expecteds, errs)
 }
 
 const missingClaims = `---
@@ -151,16 +172,13 @@ func TestMissingClaims(t *testing.T) {
 	var sv Validator
 	errs := sv.RunAll(s)
 
-	assert.Equal(t, len(errs), 3)
 	expecteds := []string{
 		"first prediction has no claim",
 		"claim after “I will like red meat” has no claim",
 		"prediction exists that has no claim, and neither does the one before it",
 	}
-	for i, expected := range expecteds {
-		assert.Equal(t, expected, errs[i].Error())
-	}
 
+	AssertErrorsMatch(t, expecteds, errs)
 }
 
 const questionableConfidences = `
@@ -186,15 +204,13 @@ func TestQuestionableConfidences(t *testing.T) {
 		sv.AllConfidencesBetweenZeroAndOneHundredExclusive,
 	)
 
-	assert.Len(t, errs, 4)
 	expecteds := []string{
 		"first prediction, with claim “green is spiky”, has a confidence level outside (0%, 100%)",
 		"prediction with claim “my left arm will turn into a tentacle” has a confidence level outside (0%, 100%)",
 		"prediction with claim “the sun will rise tomorrow” has a confidence level outside (0%, 100%)",
 		"prediction with claim “I will marry my middle-school crush” has a confidence level outside (0%, 100%)",
 	}
-	for i, expected := range expecteds {
-		assert.Equal(t, expected, errs[i].Error())
-	}
+
+	AssertErrorsMatch(t, expecteds, errs)
 
 }
