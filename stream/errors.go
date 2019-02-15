@@ -5,22 +5,17 @@ import (
 	"fmt"
 )
 
-// A PredictionErrorMaker blah blah
+// A PredictionErrorMaker takes a Stream and an index and returns an error. The index is meant to be the index of the prediction, so the first prediction is referred to with a zero index.
 type PredictionErrorMaker func(Stream, int) error
 
+// NewInsensibleConfidenceError returns an error for a prediction at an index with an insensible confidence level (not between 0% and 100%, exclusive)
 func NewInsensibleConfidenceError(s Stream, i int) error {
-	f := g(
-		"first prediction, with claim “%v”, has a confidence level outside (0%%, 100%%)",
-		"prediction with claim “%v” has a confidence level outside (0%%, 100%%)",
-		"prediction after prediction with claim “%v” has a confidence level outside (0%%, 100%%)",
-		"A prediction exists with a confidence level outside (0%%, 100%%). It doesn’t have a claim and its immediate predecessor, if any, lacks a claim too",
-	)
-
-	return f(s, i)
-
+	return makePredictionErrorMaker(
+		"has a confidence level outside (0%%, 100%%)",
+	)(s, i)
 }
 
-func g(first, at, atPrev, huh string) PredictionErrorMaker {
+func makePredictionErrorMaker(meme string) PredictionErrorMaker {
 	return func(s Stream, i int) error {
 		prefix := ""
 		if s.FromFilename != "" {
@@ -33,22 +28,30 @@ func g(first, at, atPrev, huh string) PredictionErrorMaker {
 			previousClaim = s.Predictions[i-1].Claim
 		}
 
-		// now for testing
+		first := "first prediction, with claim “%v”, " + meme
+		at := "prediction with claim “%v” " + meme
+		atPrev := "prediction after prediction with claim “%v” " + meme
+		huh := "prediction exists that " + meme + "; neither it nor its predecessor have a claim"
 
-		if i == 0 {
+		switch {
+		case i == 0:
 			return fmt.Errorf(prefix+first, claim)
-		}
-
-		if claim != "" {
+		case claim != "":
 			return fmt.Errorf(prefix+at, claim)
-		}
-
-		if previousClaim != "" {
+		case previousClaim != "":
 			return fmt.Errorf(prefix+atPrev, previousClaim)
+		default:
+			return errors.New(prefix + huh)
 		}
-
-		return errors.New(prefix + huh)
 	}
+}
+
+// meme: "has no confidence level specified"
+
+func NewNoConfidenceError(s Stream, i int) error {
+	return makePredictionErrorMaker(
+		"has no confidence level specified",
+	)(s, i)
 }
 
 // NewNoClaimError returns an error that describes the approximate location of a prediction that has no claim.

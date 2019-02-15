@@ -204,18 +204,18 @@ type NoConfidenceError struct {
 }
 
 // NewNoConfidenceError returns a reasonable error for the location it’s found in.
-func NewNoConfidenceError(predictions []PredictionDocument, i int) NoConfidenceError {
-	if predictions[i].Claim != "" {
-		return NoConfidenceError{
-			Claim: predictions[i].Claim,
-		}
-	} else if i > 0 && predictions[i-1].Claim != "" {
-		return NoConfidenceError{
-			PreviousClaim: predictions[i-1].Claim,
-		}
-	}
-	return NoConfidenceError{}
-}
+// func NewNoConfidenceError(predictions []PredictionDocument, i int) NoConfidenceError {
+// 	if predictions[i].Claim != "" {
+// 		return NoConfidenceError{
+// 			Claim: predictions[i].Claim,
+// 		}
+// 	} else if i > 0 && predictions[i-1].Claim != "" {
+// 		return NoConfidenceError{
+// 			PreviousClaim: predictions[i-1].Claim,
+// 		}
+// 	}
+// 	return NoConfidenceError{}
+// }
 
 func (e NoConfidenceError) Error() string {
 	if e.Claim != "" {
@@ -231,7 +231,7 @@ func (sv *Validator) AllPredictionsHaveConfidences(s Stream) []error {
 	errs := make([]error, 0)
 	for i, pred := range s.Predictions {
 		if pred.Confidence == 0.0 {
-			errs = append(errs, NewNoConfidenceError(s.Predictions, i))
+			errs = append(errs, NewNoConfidenceError(s, i))
 		}
 	}
 	return errs

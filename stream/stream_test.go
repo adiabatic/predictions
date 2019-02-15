@@ -92,15 +92,14 @@ func TestMetadataIsAMap(t *testing.T) {
 	}
 }
 
-const missingClaimsAndPredictions = `---
+const missingClaimsAndConfidences = `---
 title: Comestibles prognostication
 scope: this week
 ---
+claim: I will eat a steak
+---
 claim: I will eat a chocolate bar
 confidence: 70
----
-claim: I will eat a steak
-# totally missing confidence
 ---
 claim: I will eat a dinner salad
 confidence: null
@@ -111,21 +110,18 @@ claims: [I will eat ice cream, I will eat peanut-butter cups]
 # missing everything, and its predecessor is missing a “claim”
 `
 
-func disabledExample_missingClaimsAndConfidences() {
-	s := mustStreamFromString(nil, missingClaimsAndPredictions)
+func Example_missingClaimsAndConfidences() {
+	s := mustStreamFromString(nil, missingClaimsAndConfidences)
 	var sv Validator
-	errs := sv.RunAll(s)
+	errs := sv.RunValidationFunctions(s,
+		sv.AllPredictionsHaveConfidences,
+	)
 	for _, err := range errs {
 		fmt.Println(err)
 	}
 
 	// Unordered output:
-	// Prediction after “I will eat a dinner salad” has no claim in it
-	// A prediction has no claim in it. Either it’s the first prediction or the prediction before it doesn’t have a claim in it, either
-	// Prediction with claim “I will eat a steak” has no declared confidence
-	// Prediction with claim “I will eat a dinner salad” has no declared confidence
-	// Prediction after prediction with claim “I will eat a dinner salad” has no declared confidence
-	// A prediction exists that lacks both a confidence and a claim, and its predecessor lacks a claim too
+	// not it
 }
 
 const missingClaims = `---
