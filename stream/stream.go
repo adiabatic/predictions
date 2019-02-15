@@ -190,11 +190,7 @@ func (sv *Validator) AllPredictionsHaveClaims(s Stream) []error {
 
 	for i, prediction := range s.Predictions {
 		if prediction.Claim == "" {
-			if i == 0 {
-				errs = append(errs, NoClaimError{})
-			} else {
-				errs = append(errs, NoClaimError{s.Predictions[i-1].Claim})
-			}
+			errs = append(errs, NewNoClaimError(s, i))
 		}
 	}
 
@@ -285,7 +281,7 @@ func (sv *Validator) AllConfidencesBetweenZeroAndOneHundredExclusive(s Stream) [
 	errs := make([]error, 0)
 	for i, pred := range s.Predictions {
 		if pred.Confidence <= 0.0 || pred.Confidence >= 100.0 {
-			errs = append(errs, NewInsensibleConfidenceError(s.Predictions, i))
+			errs = append(errs, NewInsensibleConfidenceError(s, i))
 		}
 	}
 	return errs
