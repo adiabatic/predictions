@@ -22,6 +22,7 @@ import (
 	"sort"
 
 	"github.com/adiabatic/predictions/stream"
+	"github.com/davecgh/go-spew/spew"
 )
 
 func deduplicateTags(ss []string) []string {
@@ -90,10 +91,19 @@ func main() {
 
 	tags := TagsUsed(streams)
 	sort.Strings(tags)
+	var v stream.Validator
+
+	for _, s := range streams {
+		errs := v.RunAll(s)
+		if len(errs) > 0 {
+			spew.Dump(errs)
+		}
+	}
 
 	for _, tag := range tags {
 		buf := &bytes.Buffer{}
 		for _, s := range streams {
+
 			for _, d := range s.Predictions {
 				if d.ShouldExclude() && d.CauseForExclusion == "" {
 					continue // only print out the ones with cause
@@ -112,4 +122,5 @@ func main() {
 		}
 
 	}
+
 }

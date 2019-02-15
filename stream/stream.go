@@ -157,6 +157,7 @@ func (sv *Validator) RunAll(s Stream) []error {
 		sv.HasTitleOrScopeInMetadataBlock,
 		sv.AllPredictionsHaveClaims,
 		sv.AllPredictionsHaveConfidences,
+		sv.AllConfidencesBetweenZeroAndOneHundredExclusive,
 	)
 }
 
@@ -275,6 +276,16 @@ func (sv *Validator) AllConfidencesBetweenZeroAndOneHundredInclusive(s Stream) [
 	for i, pred := range s.Predictions {
 		if pred.Confidence < 0.0 || pred.Confidence > 100.0 {
 			errs = append(errs, NewConfidenceOutOfRange(s.Predictions, i))
+		}
+	}
+	return errs
+}
+
+func (sv *Validator) AllConfidencesBetweenZeroAndOneHundredExclusive(s Stream) []error {
+	errs := make([]error, 0)
+	for i, pred := range s.Predictions {
+		if pred.Confidence <= 0.0 || pred.Confidence >= 100.0 {
+			errs = append(errs, NewInsensibleConfidenceError(s.Predictions, i))
 		}
 	}
 	return errs
