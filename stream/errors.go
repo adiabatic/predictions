@@ -11,8 +11,8 @@ type PredictionErrorMaker func(Stream, int) error
 func NewInsensibleConfidenceError(s Stream, i int) error {
 	f := g(
 		"first prediction, with claim “%v”, has a confidence level outside (0%%, 100%%)",
-		"Prediction with claim “%v” has a confidence level outside (0%%, 100%%)",
-		"Prediction after prediction with claim “%v” has a confidence level outside (0%%, 100%%)",
+		"prediction with claim “%v” has a confidence level outside (0%%, 100%%)",
+		"prediction after prediction with claim “%v” has a confidence level outside (0%%, 100%%)",
 		"A prediction exists with a confidence level outside (0%%, 100%%). It doesn’t have a claim and its immediate predecessor, if any, lacks a claim too",
 	)
 

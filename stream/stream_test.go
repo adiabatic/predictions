@@ -166,3 +166,39 @@ func TestMissingClaims(t *testing.T) {
 	}
 
 }
+
+const questionableConfidences = `
+title: I am the universe
+---
+claim: green is spiky
+confidence: -20
+---
+claim: my left arm will turn into a tentacle
+confidence: 0
+---
+claim: the sun will rise tomorrow
+confidence: 100
+---
+claim: I will marry my middle-school crush
+confidence: 245
+`
+
+func TestQuestionableConfidences(t *testing.T) {
+	s := mustStreamFromString(t, questionableConfidences)
+	var sv Validator
+	errs := sv.RunValidationFunctions(s,
+		sv.AllConfidencesBetweenZeroAndOneHundredExclusive,
+	)
+
+	assert.Len(t, errs, 4)
+	expecteds := []string{
+		"first prediction, with claim “green is spiky”, has a confidence level outside (0%, 100%)",
+		"prediction with claim “my left arm will turn into a tentacle” has a confidence level outside (0%, 100%)",
+		"prediction with claim “the sun will rise tomorrow” has a confidence level outside (0%, 100%)",
+		"prediction with claim “I will marry my middle-school crush” has a confidence level outside (0%, 100%)",
+	}
+	for i, expected := range expecteds {
+		assert.Equal(t, expected, errs[i].Error())
+	}
+
+}
