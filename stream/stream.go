@@ -234,6 +234,7 @@ func (sv *Validator) AllConfidencesBetweenZeroAndOneHundredInclusive(s Stream) [
 	return errs
 }
 
+// AllConfidencesBetweenZeroAndOneHundredExclusive ensures all confidences are on (0, 100).
 func (sv *Validator) AllConfidencesBetweenZeroAndOneHundredExclusive(s Stream) []error {
 	errs := make([]error, 0)
 	for i, pred := range s.Predictions {

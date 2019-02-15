@@ -46,8 +46,7 @@ func makePredictionErrorMaker(meme string) PredictionErrorMaker {
 	}
 }
 
-// meme: "has no confidence level specified"
-
+// NewNoConfidenceError returns an error describing a prediction that lacks a confidence level.
 func NewNoConfidenceError(s Stream, i int) error {
 	return makePredictionErrorMaker(
 		"has no confidence level specified",
