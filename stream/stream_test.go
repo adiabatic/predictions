@@ -201,14 +201,15 @@ func TestQuestionableConfidences(t *testing.T) {
 	s := mustStreamFromString(t, questionableConfidences)
 	var sv Validator
 	errs := sv.RunValidationFunctions(s,
-		sv.AllConfidencesBetweenZeroAndOneHundredExclusive,
+		sv.AllConfidencesBetweenZeroAndOneHundredInclusive,
+		sv.AllConfidencesSensible,
 	)
 
 	expecteds := []string{
-		"[warn.confidence.insensible]: first prediction, with claim “green is spiky”, has a confidence level outside (0%, 100%)",
-		"[warn.confidence.insensible]: prediction with claim “my left arm will turn into a tentacle” has a confidence level outside (0%, 100%)",
-		"[warn.confidence.insensible]: prediction with claim “the sun will rise tomorrow” has a confidence level outside (0%, 100%)",
-		"[warn.confidence.insensible]: prediction with claim “I will marry my middle-school crush” has a confidence level outside (0%, 100%)",
+		"[error.confidence.impossible]: first prediction, with claim “green is spiky”, has a confidence level below 0% or above 100%",
+		"[error.confidence.impossible]: prediction with claim “I will marry my middle-school crush” has a confidence level below 0% or above 100%",
+		"[warn.confidence.zero]: prediction with claim “my left arm will turn into a tentacle” has a confidence level of zero",
+		"[warn.confidence.unity]: prediction with claim “the sun will rise tomorrow” has a confidence level of one",
 	}
 
 	AssertErrorsMatch(t, expecteds, errs)

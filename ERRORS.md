@@ -14,14 +14,11 @@ A prediction doesn’t have a confidence level in it. Confidence levels start wi
 
 …
 
-## [warn.confidence.insensible]
+## [warn.confidence.zero]
 
 …
 
-## [warn.confidence.insensible.zero]
+## [warn.confidence.unity]
 
 …
-
-## [warn.confidence.insensible.unity]
-
-…
+(“unity” is a fancy name for “one”.)

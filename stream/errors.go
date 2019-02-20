@@ -73,7 +73,7 @@ func NewNoClaimError(s Stream, i int) error {
 func NewConfidenceOutOfRange(s Stream, i int) error {
 	return makePredictionErrorMaker(
 		"error.confidence.impossible",
-		"has a too-weird confidence level",
+		"has a confidence level below 0%% or above 100%%",
 	)(s, i)
 }
 
@@ -90,5 +90,19 @@ func NewNoConfidenceError(s Stream, i int) error {
 	return makePredictionErrorMaker(
 		"error.confidence.missing",
 		"has no confidence level specified",
+	)(s, i)
+}
+
+func NewErrorConfidenceZero(s Stream, i int) error {
+	return makePredictionErrorMaker(
+		"warn.confidence.zero",
+		"has a confidence level of zero",
+	)(s, i)
+}
+
+func NewErrorConfidenceUnity(s Stream, i int) error {
+	return makePredictionErrorMaker(
+		"warn.confidence.unity",
+		"has a confidence level of one",
 	)(s, i)
 }
