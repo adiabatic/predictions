@@ -46,7 +46,7 @@ func ForOnly(ss []stream.Stream, f Filter) float64 {
 
 	for _, s := range ss {
 		for _, p := range s.Predictions {
-			if p.Claim == "" || p.Happened == nil {
+			if p.Claim == "" || p.Happened == nil || p.Confidence == nil {
 				continue
 			}
 
@@ -54,7 +54,7 @@ func ForOnly(ss []stream.Stream, f Filter) float64 {
 				continue
 			}
 
-			confidence := p.Confidence / 100.0
+			confidence := *(p.Confidence) / 100.0
 			outcome := 0.0
 			if *(p.Happened) == true {
 				outcome = 1.0

@@ -41,7 +41,7 @@ type MetadataDocument struct {
 // A PredictionDocument contains a claim, the claim’s confidence, and so on.
 type PredictionDocument struct {
 	Claim             string
-	Confidence        float64
+	Confidence        *float64
 	Tags              []string
 	Happened          *bool
 	CauseForExclusion string `yaml:"cause for exclusion"`
@@ -194,7 +194,7 @@ func (sv *Validator) AllPredictionsHaveClaims(s Stream) []error {
 func (sv *Validator) AllPredictionsHaveConfidences(s Stream) []error {
 	errs := make([]error, 0)
 	for i, pred := range s.Predictions {
-		if pred.Confidence == 0.0 {
+		if pred.Confidence == nil {
 			errs = append(errs, NewNoConfidenceError(s, i))
 		}
 	}
@@ -205,7 +205,8 @@ func (sv *Validator) AllPredictionsHaveConfidences(s Stream) []error {
 func (sv *Validator) AllConfidencesBetweenZeroAndOneHundredInclusive(s Stream) []error {
 	errs := make([]error, 0)
 	for i, pred := range s.Predictions {
-		if pred.Confidence < 0.0 || pred.Confidence > 100.0 {
+		if pred.Confidence != nil &&
+			*(pred.Confidence) < 0.0 || *(pred.Confidence) > 100.0 {
 			errs = append(errs, NewConfidenceOutOfRange(s, i))
 		}
 	}
@@ -216,7 +217,8 @@ func (sv *Validator) AllConfidencesBetweenZeroAndOneHundredInclusive(s Stream) [
 func (sv *Validator) AllConfidencesBetweenZeroAndOneHundredExclusive(s Stream) []error {
 	errs := make([]error, 0)
 	for i, pred := range s.Predictions {
-		if pred.Confidence <= 0.0 || pred.Confidence >= 100.0 {
+		if pred.Confidence != nil &&
+			*(pred.Confidence) <= 0.0 || *(pred.Confidence) >= 100.0 {
 			errs = append(errs, NewInsensibleConfidenceError(s, i))
 		}
 	}
