@@ -8,14 +8,6 @@ import (
 // A PredictionErrorMaker takes a Stream and an index and returns an error. The index is meant to be the index of the prediction, so the first prediction is referred to with a zero index.
 type PredictionErrorMaker func(Stream, int) error
 
-// NewInsensibleConfidenceError returns an error for a prediction at an index with an insensible confidence level (not between 0% and 100%, exclusive)
-func NewInsensibleConfidenceError(s Stream, i int) error {
-	return makePredictionErrorMaker(
-		"warn.confidence.insensible",
-		"has a confidence level outside (0%%, 100%%)",
-	)(s, i)
-}
-
 func makePredictionErrorMaker(id, meme string) PredictionErrorMaker {
 	return func(s Stream, i int) error {
 		prefix := ""
@@ -49,26 +41,9 @@ func makePredictionErrorMaker(id, meme string) PredictionErrorMaker {
 	}
 }
 
-// Error makers
-
-// NewConfidenceOutOfRange returns an error describing a prediction that has a too-weird confidence level.
-func NewConfidenceOutOfRange(s Stream, i int) error {
-	return makePredictionErrorMaker(
-		"error.confidence.impossible",
-		"has a too-weird confidence level",
-	)(s, i)
-}
-
-// NewNoConfidenceError returns an error describing a prediction that lacks a confidence level.
-func NewNoConfidenceError(s Stream, i int) error {
-	return makePredictionErrorMaker(
-		"error.confidence.missing",
-		"has no confidence level specified",
-	)(s, i)
-}
-
 // NewNoClaimError returns an error that describes the approximate location of a prediction that has no claim.
 func NewNoClaimError(s Stream, i int) error {
+	// While I’d love to use makePredictionErrorMaker instead of mostly reimplementing it, makePredictionErrorMaker pinpoints errors by claim location. What, then, could it say about predictions that have no claim?
 	prefix := ""
 	if s.FromFilename != "" {
 		prefix = s.FromFilename + ": "
@@ -87,4 +62,30 @@ func NewNoClaimError(s Stream, i int) error {
 	default:
 		return fmt.Errorf(prefix + "prediction exists that has no claim, and neither does the one before it")
 	}
+}
+
+// Error makers
+
+// NewConfidenceOutOfRange returns an error describing a prediction that has a too-weird confidence level.
+func NewConfidenceOutOfRange(s Stream, i int) error {
+	return makePredictionErrorMaker(
+		"error.confidence.impossible",
+		"has a too-weird confidence level",
+	)(s, i)
+}
+
+// NewInsensibleConfidenceError returns an error for a prediction at an index with an insensible confidence level (not between 0% and 100%, exclusive)
+func NewInsensibleConfidenceError(s Stream, i int) error {
+	return makePredictionErrorMaker(
+		"warn.confidence.insensible",
+		"has a confidence level outside (0%%, 100%%)",
+	)(s, i)
+}
+
+// NewNoConfidenceError returns an error describing a prediction that lacks a confidence level.
+func NewNoConfidenceError(s Stream, i int) error {
+	return makePredictionErrorMaker(
+		"error.confidence.missing",
+		"has no confidence level specified",
+	)(s, i)
 }
