@@ -136,10 +136,10 @@ func TestMissingClaimsAndConfidences(t *testing.T) {
 	)
 
 	expecteds := []string{
-		"first prediction, with claim “I will eat a steak”, has no confidence level specified",
-		"prediction with claim “I will eat a dinner salad” has no confidence level specified",
-		"prediction after prediction with claim “I will eat a dinner salad” has no confidence level specified",
-		"prediction exists that has no confidence level specified; neither it nor its predecessor have a claim",
+		"[error.confidence.missing]: first prediction, with claim “I will eat a steak”, has no confidence level specified",
+		"[error.confidence.missing]: prediction with claim “I will eat a dinner salad” has no confidence level specified",
+		"[error.confidence.missing]: prediction after prediction with claim “I will eat a dinner salad” has no confidence level specified",
+		"[error.confidence.missing]: prediction exists that has no confidence level specified; neither it nor its predecessor have a claim",
 	}
 
 	AssertErrorsMatch(t, expecteds, errs)
@@ -205,10 +205,10 @@ func TestQuestionableConfidences(t *testing.T) {
 	)
 
 	expecteds := []string{
-		"first prediction, with claim “green is spiky”, has a confidence level outside (0%, 100%)",
-		"prediction with claim “my left arm will turn into a tentacle” has a confidence level outside (0%, 100%)",
-		"prediction with claim “the sun will rise tomorrow” has a confidence level outside (0%, 100%)",
-		"prediction with claim “I will marry my middle-school crush” has a confidence level outside (0%, 100%)",
+		"[warn.confidence.insensible]: first prediction, with claim “green is spiky”, has a confidence level outside (0%, 100%)",
+		"[warn.confidence.insensible]: prediction with claim “my left arm will turn into a tentacle” has a confidence level outside (0%, 100%)",
+		"[warn.confidence.insensible]: prediction with claim “the sun will rise tomorrow” has a confidence level outside (0%, 100%)",
+		"[warn.confidence.insensible]: prediction with claim “I will marry my middle-school crush” has a confidence level outside (0%, 100%)",
 	}
 
 	AssertErrorsMatch(t, expecteds, errs)

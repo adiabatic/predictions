@@ -51,9 +51,10 @@ func makePredictionErrorMaker(id, meme string) PredictionErrorMaker {
 
 // Error makers
 
+// NewConfidenceOutOfRange returns an error describing a prediction that has a too-weird confidence level.
 func NewConfidenceOutOfRange(s Stream, i int) error {
 	return makePredictionErrorMaker(
-		"error-or-warning.confidence.out-of-range",
+		"error.confidence.impossible",
 		"has a too-weird confidence level",
 	)(s, i)
 }
