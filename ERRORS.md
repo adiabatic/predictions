@@ -2,6 +2,10 @@
 
 <!-- markdownlint-disable MD038 -->
 
+## cannot unmarshal !!str `…` into float64
+
+Whatever you wrote as a confidence isn’t recognized as such. Confidence levels need to be written as a number between 0 and 100, without the percent sign.
+
 ## [error.claim.missing]
 
 A prediction doesn’t have a claim in it. Claims start with `claim: `.

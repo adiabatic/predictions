@@ -9,8 +9,6 @@ import (
 )
 
 func mustStreamFromString(t *testing.T, s string) Stream {
-	const msg = "FromReader should at least work"
-
 	st, err := FromReader(strings.NewReader(s))
 	if err != nil {
 		if t == nil {
@@ -214,4 +212,30 @@ func TestQuestionableConfidences(t *testing.T) {
 
 	AssertErrorsMatch(t, expecteds, errs)
 
+}
+
+const confidenceWithPercentageSigns = `
+title: I am all the universes
+---
+claim: I will wear out the 5 key on my keyboard
+confidence: 80%
+`
+
+func TestConfidenceWithPercentageSigns(t *testing.T) {
+	_, err := FromReader(strings.NewReader(confidenceWithPercentageSigns))
+	assert.EqualError(t, err,
+		"error reading the first prediction: yaml: unmarshal errors:\n  line 5: cannot unmarshal !!str `80%` into float64")
+}
+
+const confidenceNotAtAllANumber = `
+title: I predict my drinking habits
+---
+claim: I will order three beers at a bar
+confidence: maybe
+`
+
+func TestConfidenceNotAtAllANumber(t *testing.T) {
+	_, err := FromReader(strings.NewReader(confidenceNotAtAllANumber))
+	assert.EqualError(t, err,
+		"error reading the first prediction: yaml: unmarshal errors:\n  line 5: cannot unmarshal !!str `maybe` into float64")
 }
