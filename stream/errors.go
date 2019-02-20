@@ -5,6 +5,8 @@ import (
 	"fmt"
 )
 
+// NB: The term “error” here is overloaded. I call everything in here an error even though, to the user, some are errors and some are warnings.
+
 // A PredictionErrorMaker takes a Stream and an index and returns an error. The index is meant to be the index of the prediction, so the first prediction is referred to with a zero index.
 type PredictionErrorMaker func(Stream, int) error
 
@@ -85,6 +87,7 @@ func NewErrorConfidenceImpossible(s Stream, i int) error {
 	)(s, i)
 }
 
+// NewErrorConfidenceZero returns an error describing a prediction that has a confidence level of zero.
 func NewErrorConfidenceZero(s Stream, i int) error {
 	return makePredictionErrorMaker(
 		"warn.confidence.zero",
@@ -92,6 +95,7 @@ func NewErrorConfidenceZero(s Stream, i int) error {
 	)(s, i)
 }
 
+// NewErrorConfidenceUnity returns an error describing a prediction that has a confidence level of 100%.
 func NewErrorConfidenceUnity(s Stream, i int) error {
 	return makePredictionErrorMaker(
 		"warn.confidence.unity",
