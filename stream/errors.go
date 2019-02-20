@@ -11,16 +11,19 @@ type PredictionErrorMaker func(Stream, int) error
 // NewInsensibleConfidenceError returns an error for a prediction at an index with an insensible confidence level (not between 0% and 100%, exclusive)
 func NewInsensibleConfidenceError(s Stream, i int) error {
 	return makePredictionErrorMaker(
+		"warn.confidence.insensible",
 		"has a confidence level outside (0%%, 100%%)",
 	)(s, i)
 }
 
-func makePredictionErrorMaker(meme string) PredictionErrorMaker {
+func makePredictionErrorMaker(id, meme string) PredictionErrorMaker {
 	return func(s Stream, i int) error {
 		prefix := ""
 		if s.FromFilename != "" {
 			prefix = s.FromFilename + ": "
 		}
+
+		prefix += "[" + id + "]: "
 
 		claim := s.Predictions[i].Claim
 		previousClaim := ""
@@ -50,6 +53,7 @@ func makePredictionErrorMaker(meme string) PredictionErrorMaker {
 
 func NewConfidenceOutOfRange(s Stream, i int) error {
 	return makePredictionErrorMaker(
+		"error-or-warning.confidence.out-of-range",
 		"has a too-weird confidence level",
 	)(s, i)
 }
@@ -57,6 +61,7 @@ func NewConfidenceOutOfRange(s Stream, i int) error {
 // NewNoConfidenceError returns an error describing a prediction that lacks a confidence level.
 func NewNoConfidenceError(s Stream, i int) error {
 	return makePredictionErrorMaker(
+		"error.confidence.missing",
 		"has no confidence level specified",
 	)(s, i)
 }
