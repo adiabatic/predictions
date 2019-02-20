@@ -1,5 +1,7 @@
 # Errors and warnings
 
+<!-- markdownlint-disable MD038 -->
+
 ## [error.claim.missing]
 
 A prediction doesn’t have a claim in it. Claims start with `claim: `.
