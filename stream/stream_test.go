@@ -173,9 +173,9 @@ func TestMissingClaims(t *testing.T) {
 	errs := sv.RunAll(s)
 
 	expecteds := []string{
-		"first prediction has no claim",
-		"claim after “I will like red meat” has no claim",
-		"prediction exists that has no claim, and neither does the one before it",
+		"[error.claim.missing]: first prediction has no claim",
+		"[error.claim.missing]: claim after “I will like red meat” has no claim",
+		"[error.claim.missing]: prediction exists that has no claim, and neither does the one before it",
 	}
 
 	AssertErrorsMatch(t, expecteds, errs)

@@ -49,6 +49,9 @@ func NewNoClaimError(s Stream, i int) error {
 		prefix = s.FromFilename + ": "
 	}
 
+	const id = "error.claim.missing"
+	prefix += "[" + id + "]: "
+
 	previousClaim := ""
 	if i > 0 {
 		previousClaim = s.Predictions[i-1].Claim
