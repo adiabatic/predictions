@@ -150,6 +150,14 @@ func (sv *Validator) RunValidationFunctions(s Stream, vfs ...ValidationFunction)
 	return errs
 }
 
+// RunMinimal is a convenience function to run the bare minimum of sanity checks.
+func (sv *Validator) RunMinimal(s Stream) []error {
+	return sv.RunValidationFunctions(s,
+		sv.AllPredictionsHaveClaims,
+		sv.AllPredictionsHaveConfidences,
+	)
+}
+
 // RunAll is a convenience function to run all known stream validators.
 func (sv *Validator) RunAll(s Stream) []error {
 	return sv.RunValidationFunctions(s,
