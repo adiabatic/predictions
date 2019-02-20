@@ -1,0 +1,9 @@
+# Errors and warnings
+
+## [error.claim.missing]
+
+A prediction doesn’t have a claim in it. Claims start with `claim: `.
+
+## [error.confidence.missing]
+
+A prediction doesn’t have a confidence level in it. Confidence levels start with `confidence: `.
