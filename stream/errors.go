@@ -41,8 +41,8 @@ func makePredictionErrorMaker(id, meme string) PredictionErrorMaker {
 	}
 }
 
-// NewNoClaimError returns an error that describes the approximate location of a prediction that has no claim.
-func NewNoClaimError(s Stream, i int) error {
+// NewErrorClaimMissing returns an error that describes the approximate location of a prediction that has no claim.
+func NewErrorClaimMissing(s Stream, i int) error {
 	// While I’d love to use makePredictionErrorMaker instead of mostly reimplementing it, makePredictionErrorMaker pinpoints errors by claim location. What, then, could it say about predictions that have no claim?
 	prefix := ""
 	if s.FromFilename != "" {
@@ -69,27 +69,19 @@ func NewNoClaimError(s Stream, i int) error {
 
 // Error makers
 
-// NewConfidenceOutOfRange returns an error describing a prediction that has a too-weird confidence level.
-func NewConfidenceOutOfRange(s Stream, i int) error {
-	return makePredictionErrorMaker(
-		"error.confidence.impossible",
-		"has a confidence level below 0%% or above 100%%",
-	)(s, i)
-}
-
-// NewInsensibleConfidenceError returns an error for a prediction at an index with an insensible confidence level (not between 0% and 100%, exclusive)
-func NewInsensibleConfidenceError(s Stream, i int) error {
-	return makePredictionErrorMaker(
-		"warn.confidence.insensible",
-		"has a confidence level outside (0%%, 100%%)",
-	)(s, i)
-}
-
-// NewNoConfidenceError returns an error describing a prediction that lacks a confidence level.
-func NewNoConfidenceError(s Stream, i int) error {
+// NewErrorConfidenceMissing returns an error describing a prediction that lacks a confidence level.
+func NewErrorConfidenceMissing(s Stream, i int) error {
 	return makePredictionErrorMaker(
 		"error.confidence.missing",
 		"has no confidence level specified",
+	)(s, i)
+}
+
+// NewErrorConfidenceImpossible returns an error describing a prediction that has a confidence level below 0% or above 100%.
+func NewErrorConfidenceImpossible(s Stream, i int) error {
+	return makePredictionErrorMaker(
+		"error.confidence.impossible",
+		"has a confidence level below 0%% or above 100%%",
 	)(s, i)
 }
 
