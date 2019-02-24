@@ -53,3 +53,4 @@ Why salt? Because if Dennis or his friends have a lot of free time, they could t
 - `go get gopkg.in/yaml.v2`
 - `go get github.com/davecgh/go-spew/spew`
 - `go get github.com/stretchr/testify`
+- `go get -u github.com/spf13/cobra/cobra`
