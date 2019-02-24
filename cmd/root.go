@@ -34,9 +34,10 @@ func initConfig() {
 }
 
 var rootCommand = &cobra.Command{
-	Use:   "predictions",
-	Short: "predictions finds out how well-calibrated your predictions are",
-	Args:  cobra.MinimumNArgs(1),
+	Use:                   "predictions",
+	Short:                 "predictions finds out how well-calibrated your predictions are",
+	DisableFlagsInUseLine: true,
+	Args:                  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		streams, err := stream.StreamsFromFiles(args)
 		if err != nil {

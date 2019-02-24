@@ -27,9 +27,10 @@ func init() {
 }
 
 var checkCommand = &cobra.Command{
-	Use:   "check",
-	Short: "Ensure predictions files are sensible",
-	Args:  cobra.MinimumNArgs(1),
+	Use:                   "check [filenames…]",
+	Short:                 "Ensure predictions files are sensible",
+	DisableFlagsInUseLine: true,
+	Args:                  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		streams, err := stream.StreamsFromFiles(args)
 		if err != nil {
