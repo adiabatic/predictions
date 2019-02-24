@@ -45,6 +45,5 @@ var checkCommand = &cobra.Command{
 				cmd.Println(err)
 			}
 		}
-
 	},
 }
