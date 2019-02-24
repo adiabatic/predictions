@@ -11,7 +11,7 @@ This describes `predictions`’ file format. `predictions` uses [YAML][], so thi
 - YAML documents are separated by “---” on lines by themselves.
 - The first document in a file is a mapping that specifies metadata.
 - Mappings’ keys (the part before the “: ”) can be in any order.
-- Each document after the metadata document contains one mapping.
+- Each document after the metadata document contains one top-level mapping with, potentially, all sorts of different values.
 - Each mapping after the metadata document is called a prediction.
 - Each prediction has both a claim and a confidence unless the author forgot one (or both).
 
