@@ -20,6 +20,7 @@ import (
 	"os"
 	"sort"
 
+	"github.com/adiabatic/predictions/formatters"
 	"github.com/adiabatic/predictions/streams"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/cobra"
@@ -69,7 +70,7 @@ var rootCommand = &cobra.Command{
 					}
 
 					if d.HasTag(tag) {
-						fmt.Fprintln(buf, streams.AsMarkdown(d))
+						fmt.Fprintln(buf, formatters.DocumentAsMarkdown(d))
 					}
 				}
 			}

@@ -13,3 +13,50 @@
 // limitations under the License.
 
 package formatters
+
+import (
+	"fmt"
+	"strings"
+
+	"github.com/adiabatic/predictions/streams"
+)
+
+func DocumentAsMarkdown(d streams.PredictionDocument) string {
+	meat := fmt.Sprintf("%v: %v%%", d.Claim, *(d.Confidence))
+	withToppings := ""
+	if d.Happened == nil {
+		withToppings = fmt.Sprintf("- <i>%v</i>", meat)
+	} else if *(d.Happened) {
+		withToppings = fmt.Sprintf("- %v", meat)
+	} else {
+		withToppings = fmt.Sprintf("- <s>%v</s>", meat)
+	}
+
+	return withToppings + "\n"
+}
+
+func StreamAsMarkdown(st streams.Stream) string {
+	var buf strings.Builder
+
+	for _, d := range st.Predictions {
+		if d.ShouldExclude() {
+			continue
+		}
+
+		buf.WriteString(DocumentAsMarkdown(d))
+	}
+	buf.WriteString("\n")
+	return buf.String()
+}
+
+func AsMarkdown(sts []streams.Stream) string {
+	var buf strings.Builder
+
+	// TODO: first by title/scope, then by each individual tag…
+	for _, st := range sts {
+		buf.WriteString(StreamAsMarkdown(st))
+	}
+
+	buf.WriteString("\n")
+	return buf.String()
+}
