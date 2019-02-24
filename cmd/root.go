@@ -33,7 +33,7 @@ func initConfig() {
 
 }
 
-var rootCmd = &cobra.Command{
+var rootCommand = &cobra.Command{
 	Use:   "predictions",
 	Short: "predictions finds out how well-calibrated your predictions are",
 	Args:  cobra.MinimumNArgs(1),
@@ -86,7 +86,7 @@ var rootCmd = &cobra.Command{
 
 // Execute runs the root command.
 func Execute() {
-	if err := rootCmd.Execute(); err != nil {
+	if err := rootCommand.Execute(); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
