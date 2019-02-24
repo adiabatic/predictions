@@ -1,3 +1,17 @@
+// © 2019 Nathan Galt
+//
+// Licensed under the Apache License, Version 2.0 (the “License”);
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// 	https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an “AS IS” BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
 // Package brier calculates Brier scores for slices of stream.Stream.
 //
 // Brier scores go from 0 to 1. 0 is the best score achievable, while 1 is the worst score achievable. If you put an event at the 50% confidence interval, your Brier score will be ¼ regardless of what happens. To aggregate Brier scores, add them all up and divide by how many you have, just like an arithmetic mean.
