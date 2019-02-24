@@ -30,18 +30,18 @@ package brier
 import (
 	"math"
 
-	"github.com/adiabatic/predictions/stream"
+	"github.com/adiabatic/predictions/streams"
 )
 
 // A Filter is a function that filters out predictions if the filter returns false.
-type Filter func(stream.PredictionDocument) bool
+type Filter func(streams.PredictionDocument) bool
 
 // Everything is a Filter that always returns true.
-func Everything(_ stream.PredictionDocument) bool { return true }
+func Everything(_ streams.PredictionDocument) bool { return true }
 
 // MatchingTag returns a Filter that returns true if the prediction’s tag matches the given tag.
 func MatchingTag(tag string) Filter {
-	return func(d stream.PredictionDocument) bool {
+	return func(d streams.PredictionDocument) bool {
 		for _, predictionTag := range d.Tags {
 			if tag == predictionTag {
 				return true
@@ -54,7 +54,7 @@ func MatchingTag(tag string) Filter {
 // ForOnly calculates the Brier score for only predictions where f returns true.
 //
 // Returns NaN if there were no predictions scored.
-func ForOnly(ss []stream.Stream, f Filter) float64 {
+func ForOnly(ss []streams.Stream, f Filter) float64 {
 	eligiblePredictions := 0
 	sum := 0.0
 

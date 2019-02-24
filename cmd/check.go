@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/adiabatic/predictions/stream"
+	"github.com/adiabatic/predictions/streams"
 	"github.com/spf13/cobra"
 )
 
@@ -32,15 +32,15 @@ var checkCommand = &cobra.Command{
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		streams, err := stream.StreamsFromFiles(args)
+		ss, err := streams.StreamsFromFiles(args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
 
-		v := stream.Validator{}
+		v := streams.Validator{}
 
-		for _, s := range streams {
+		for _, s := range ss {
 			errs := v.RunAll(s)
 			for _, err := range errs {
 				cmd.Println(err)

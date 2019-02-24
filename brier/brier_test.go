@@ -19,15 +19,15 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/adiabatic/predictions/stream"
+	"github.com/adiabatic/predictions/streams"
 )
 
-func mustStreams(s string) []stream.Stream {
-	aStream, err := stream.FromReader(strings.NewReader(s))
+func mustStreams(s string) []streams.Stream {
+	aStream, err := streams.FromReader(strings.NewReader(s))
 	if err != nil {
 		panic("FromReader should work")
 	}
-	ret := make([]stream.Stream, 0, 1)
+	ret := make([]streams.Stream, 0, 1)
 	ret = append(ret, aStream)
 
 	return ret

@@ -12,10 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-// Package stream provides a way to access predictions in a YAML stream.
+// Package streams provides a way to access predictions in a YAML stream.
 //
 // YAML streams contain one or more documents in them, separated by three hyphen-minuses (---). In streams that we’re using, the first document functions as a metadata header while all subsequent documents are predictions. Each prediction, with few exceptions, has both a claim and a confidence.
-package stream
+package streams
 
 import (
 	"io"

@@ -20,7 +20,7 @@ import (
 	"os"
 	"sort"
 
-	"github.com/adiabatic/predictions/stream"
+	"github.com/adiabatic/predictions/streams"
 	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/cobra"
 )
@@ -39,7 +39,7 @@ var rootCommand = &cobra.Command{
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		streams, err := stream.StreamsFromFiles(args)
+		ss, err := streams.StreamsFromFiles(args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -48,11 +48,11 @@ var rootCommand = &cobra.Command{
 		// fmt.Println("the streams:")
 		// spew.Dump(streams)
 
-		tags := stream.TagsUsed(streams)
+		tags := streams.TagsUsed(ss)
 		sort.Strings(tags)
-		var v stream.Validator
+		var v streams.Validator
 
-		for _, s := range streams {
+		for _, s := range ss {
 			errs := v.RunAll(s)
 			if len(errs) > 0 {
 				spew.Dump(errs)
@@ -61,7 +61,7 @@ var rootCommand = &cobra.Command{
 
 		for _, tag := range tags {
 			buf := &bytes.Buffer{}
-			for _, s := range streams {
+			for _, s := range ss {
 
 				for _, d := range s.Predictions {
 					if d.ShouldExclude() {
@@ -69,7 +69,7 @@ var rootCommand = &cobra.Command{
 					}
 
 					if d.HasTag(tag) {
-						fmt.Fprintln(buf, stream.AsMarkdown(d))
+						fmt.Fprintln(buf, streams.AsMarkdown(d))
 					}
 				}
 			}
