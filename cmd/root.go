@@ -68,8 +68,8 @@ var rootCommand = &cobra.Command{
 						continue // only print out the ones with cause
 					}
 
-					if hasTag(d, tag) {
-						fmt.Fprintln(buf, asMarkdown(d))
+					if d.HasTag(tag) {
+						fmt.Fprintln(buf, stream.AsMarkdown(d))
 					}
 				}
 			}
@@ -91,29 +91,4 @@ func Execute() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-}
-
-// extra stuff that belongs elsewhere
-
-func asMarkdown(d stream.PredictionDocument) string {
-	meat := fmt.Sprintf("%v: %v%%", d.Claim, *(d.Confidence))
-	withToppings := ""
-	if d.Happened == nil {
-		withToppings = fmt.Sprintf("- <i>%v</i>", meat)
-	} else if *(d.Happened) {
-		withToppings = fmt.Sprintf("- %v", meat)
-	} else {
-		withToppings = fmt.Sprintf("- <s>%v</s>", meat)
-	}
-
-	return withToppings
-}
-
-func hasTag(d stream.PredictionDocument, tag string) bool {
-	for _, t := range d.Tags {
-		if t == tag {
-			return true
-		}
-	}
-	return false
 }

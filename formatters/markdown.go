@@ -12,22 +12,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package stream
-
-import (
-	"fmt"
-)
-
-func AsMarkdown(d PredictionDocument) string {
-	meat := fmt.Sprintf("%v: %v%%", d.Claim, *(d.Confidence))
-	withToppings := ""
-	if d.Happened == nil {
-		withToppings = fmt.Sprintf("- <i>%v</i>", meat)
-	} else if *(d.Happened) {
-		withToppings = fmt.Sprintf("- %v", meat)
-	} else {
-		withToppings = fmt.Sprintf("- <s>%v</s>", meat)
-	}
-
-	return withToppings
-}
+package formatters

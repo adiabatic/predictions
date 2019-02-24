@@ -66,11 +66,30 @@ type PredictionDocument struct {
 
 // ShouldExclude returns true if the receiver should be excluded from stats calculation.
 func (d *PredictionDocument) ShouldExclude() bool {
+	if d == nil {
+		return false
+	}
+
 	if d.Confidence == nil || d.Happened == nil || d.CauseForExclusion != "" {
 		return true
 	}
 
 	return false
+}
+
+// HasTag returns true if the given tag is in the receiver’s tag list.
+func (d *PredictionDocument) HasTag(tag string) bool {
+	if d == nil {
+		return false
+	}
+
+	for _, t := range d.Tags {
+		if t == tag {
+			return true
+		}
+	}
+	return false
+
 }
 
 func fromReaderWithFilename(r io.Reader, filename string) (Stream, error) {
@@ -240,4 +259,33 @@ func (sv *Validator) AllConfidencesSensible(s Stream) []error {
 		}
 	}
 	return errs
+}
+
+// other stuff
+
+func deduplicateTags(ss []string) []string {
+	seen := make(map[string]struct{}, len(ss))
+	j := 0
+	for _, v := range ss {
+		if _, ok := seen[v]; ok {
+			continue
+		}
+		seen[v] = struct{}{}
+		ss[j] = v
+		j++
+	}
+	return ss[:j]
+}
+
+// TagsUsed returns a list of all tags used in the given slice of stream.Stream.
+func TagsUsed(ss []Stream) []string {
+	ret := make([]string, 0)
+	for _, s := range ss {
+		for _, p := range s.Predictions {
+			for _, t := range p.Tags {
+				ret = append(ret, t)
+			}
+		}
+	}
+	return deduplicateTags(ret)
 }
