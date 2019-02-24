@@ -53,7 +53,7 @@ func TagsUsed(ss []stream.Stream) []string {
 }
 
 func asMarkdown(d stream.PredictionDocument) string {
-	meat := fmt.Sprintf("%v: %v%%", d.Claim, d.Confidence)
+	meat := fmt.Sprintf("%v: %v%%", d.Claim, *(d.Confidence))
 	withToppings := ""
 	if d.Happened == nil {
 		withToppings = fmt.Sprintf("- <i>%v</i>", meat)
@@ -105,7 +105,7 @@ func main() {
 		for _, s := range streams {
 
 			for _, d := range s.Predictions {
-				if d.ShouldExclude() && d.CauseForExclusion == "" {
+				if d.ShouldExclude() {
 					continue // only print out the ones with cause
 				}
 

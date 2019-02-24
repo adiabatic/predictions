@@ -50,9 +50,9 @@ type PredictionDocument struct {
 	Notes             string
 }
 
-// ShouldExclude returns true if the receiver should be excluded from consideration.
+// ShouldExclude returns true if the receiver should be excluded from stats calculation.
 func (d *PredictionDocument) ShouldExclude() bool {
-	if d.Happened == nil || d.CauseForExclusion != "" {
+	if d.Confidence == nil || d.Happened == nil || d.CauseForExclusion != "" {
 		return true
 	}
 
