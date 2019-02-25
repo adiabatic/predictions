@@ -20,6 +20,8 @@ import (
 	"os"
 	"strings"
 
+	"gopkg.in/russross/blackfriday.v2"
+
 	"github.com/adiabatic/predictions/streams"
 	"github.com/spf13/cobra"
 )
@@ -151,7 +153,7 @@ const htmlTemplate = `<!DOCTYPE html>
 			</div></div>    
 			<div class='claim center-child-vertically'><div>{{ .Claim }}</div></div>
 			<div class='tags'>tags: {{ commaSeparate .Tags }}</div>
-			<div class='notes'>{{ .Notes }}</div>
+			<div class='notes'>{{ .Notes | safeHTML }}</div>
 		</div>
 		{{ end }}
 	</section>
@@ -180,6 +182,8 @@ var publishHTMLCommand = &cobra.Command{
 			os.Exit(1)
 		}
 
+		markdownifyNotes(sts)
+
 		var p payload
 
 		if len(sts) == 1 {
@@ -204,6 +208,9 @@ var publishHTMLCommand = &cobra.Command{
 			"commaSeparate": func(ss []string) string {
 				return strings.Join(ss, ", ")
 			},
+			"safeHTML": func(s string) template.HTML {
+				return template.HTML(s)
+			},
 		}
 
 		t := template.Must(template.New("whatever").Funcs(funcs).Parse(htmlTemplate))
@@ -214,4 +221,14 @@ var publishHTMLCommand = &cobra.Command{
 		}
 
 	},
+}
+
+func markdownifyNotes(sts []streams.Stream) {
+	for _, st := range sts {
+		for i, d := range st.Predictions {
+			if d.Notes != "" {
+				st.Predictions[i].Notes = string(blackfriday.Run([]byte(d.Notes)))
+			}
+		}
+	}
 }
