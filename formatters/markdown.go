@@ -21,7 +21,7 @@ import (
 	"github.com/adiabatic/predictions/streams"
 )
 
-// DocumentAsMarkdown makes a Markdown-formatted document.
+// MarkdownFromDocument makes a Markdown-formatted document.
 //
 // Formatting:
 //
@@ -31,8 +31,8 @@ import (
 //
 // - things that didn't happen are struck through
 //
-// Note that DocumentAsMarkdown also uses HTML for the italics and the strikethrough. This may be a problem in some contexts that allow markdown but not HTML, like some forum software in some configurations.
-func DocumentAsMarkdown(d streams.PredictionDocument) string {
+// Note that MarkdownFromDocument also uses HTML for the italics and the strikethrough. This may be a problem in some contexts that allow markdown but not HTML, like some forum software in some configurations.
+func MarkdownFromDocument(d streams.PredictionDocument) string {
 	meat := fmt.Sprintf("%v: %v%%", d.Claim, *(d.Confidence))
 	withToppings := ""
 	if d.Happened == nil {
@@ -46,8 +46,8 @@ func DocumentAsMarkdown(d streams.PredictionDocument) string {
 	return withToppings + "\n"
 }
 
-// StreamAsMarkdown makes a markdown-formatted stream.
-func StreamAsMarkdown(st streams.Stream) string {
+// MarkdownFromStream makes a markdown-formatted stream.
+func MarkdownFromStream(st streams.Stream) string {
 	var buf strings.Builder
 
 	for _, d := range st.Predictions {
@@ -55,19 +55,19 @@ func StreamAsMarkdown(st streams.Stream) string {
 			continue
 		}
 
-		buf.WriteString(DocumentAsMarkdown(d))
+		buf.WriteString(MarkdownFromDocument(d))
 	}
 	buf.WriteString("\n")
 	return buf.String()
 }
 
-// AsMarkdown makes a Markdown-formatted version of a slice of streams.
-func AsMarkdown(sts []streams.Stream) string {
+// MarkdownFromStreams makes a Markdown-formatted version of a slice of streams.
+func MarkdownFromStreams(sts []streams.Stream) string {
 	var buf strings.Builder
 
 	// TODO: first by title/scope, then by each individual tag…
 	for _, st := range sts {
-		buf.WriteString(StreamAsMarkdown(st))
+		buf.WriteString(MarkdownFromStream(st))
 	}
 
 	buf.WriteString("\n")

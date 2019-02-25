@@ -70,7 +70,7 @@ var rootCommand = &cobra.Command{
 					}
 
 					if d.HasTag(tag) {
-						fmt.Fprintln(buf, formatters.DocumentAsMarkdown(d))
+						fmt.Fprintln(buf, formatters.MarkdownFromDocument(d))
 					}
 				}
 			}
