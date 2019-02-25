@@ -28,6 +28,7 @@ func init() {
 
 var checkCommand = &cobra.Command{
 	Use:                   "check [filenames…]",
+	Aliases:               []string{"c"},
 	Short:                 "Ensure predictions files are sensible",
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MinimumNArgs(1),
