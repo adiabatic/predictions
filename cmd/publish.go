@@ -25,6 +25,19 @@ func init() {
 var publishCommand = &cobra.Command{
 	Use:                   "publish",
 	Aliases:               []string{"p"},
-	Short:                 "Formats your predictions for publishing",
+	Short:                 "Formats predictions for publishing",
 	DisableFlagsInUseLine: true,
+}
+
+func combineTitleAndScope(title, scope string) string {
+	r := ""
+	if title != "" {
+		r += title
+		if scope != "" {
+			r += ": " + scope
+		}
+	} else {
+		r += scope
+	}
+	return r
 }

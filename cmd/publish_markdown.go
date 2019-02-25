@@ -41,18 +41,10 @@ var publishMarkdownCommand = &cobra.Command{
 		}
 
 		for _, st := range sts {
-			header := ""
-			if st.Metadata.Title != "" {
-				header += "# " + st.Metadata.Title
-				if st.Metadata.Scope != "" {
-					header += ": " + st.Metadata.Scope
-				}
-			} else if st.Metadata.Scope != "" {
-				header += "# " + st.Metadata.Scope
-			}
+			header := combineTitleAndScope(st.Metadata.Title, st.Metadata.Scope)
 
 			if header != "" {
-				fmt.Println(header)
+				fmt.Println("# " + header)
 				fmt.Println()
 			}
 
