@@ -21,6 +21,17 @@ import (
 	"github.com/adiabatic/predictions/streams"
 )
 
+// DocumentAsMarkdown makes a Markdown-formatted document.
+//
+// Formatting:
+//
+// - indeterminate results are italicized
+//
+// - things that happened are plain
+//
+// - things that didn't happen are struck through
+//
+// Note that DocumentAsMarkdown also uses HTML for the italics and the strikethrough. This may be a problem in some contexts that allow markdown but not HTML, like some forum software in some configurations.
 func DocumentAsMarkdown(d streams.PredictionDocument) string {
 	meat := fmt.Sprintf("%v: %v%%", d.Claim, *(d.Confidence))
 	withToppings := ""
@@ -35,6 +46,7 @@ func DocumentAsMarkdown(d streams.PredictionDocument) string {
 	return withToppings + "\n"
 }
 
+// StreamAsMarkdown makes a markdown-formatted stream.
 func StreamAsMarkdown(st streams.Stream) string {
 	var buf strings.Builder
 
@@ -49,6 +61,7 @@ func StreamAsMarkdown(st streams.Stream) string {
 	return buf.String()
 }
 
+// AsMarkdown makes a Markdown-formatted version of a slice of streams.
 func AsMarkdown(sts []streams.Stream) string {
 	var buf strings.Builder
 
