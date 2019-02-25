@@ -98,6 +98,11 @@ const htmlTemplate = `<!DOCTYPE html>
 			color: hsl(120, 50%, 50%);
 		}
 
+		.result.false {
+			background: hsl(0, 50%, 90%);
+			color: hsl(0, 50%, 50%);
+		}
+
 		.tags {
 			grid-area: t;
 			color: #666;
