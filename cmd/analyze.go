@@ -37,7 +37,7 @@ var analyzeCommand = &cobra.Command{
 	DisableFlagsInUseLine: true,
 	Args:                  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		ss, err := streams.StreamsFromFiles(args)
+		sts, err := streams.StreamsFromFiles(args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
@@ -46,12 +46,12 @@ var analyzeCommand = &cobra.Command{
 		// fmt.Println("the streams:")
 		// spew.Dump(streams)
 
-		tags := streams.TagsUsed(ss)
+		tags := streams.TagsUsed(sts)
 		sort.Strings(tags)
 		var v streams.Validator
 
-		for _, s := range ss {
-			errs := v.RunAll(s)
+		for _, st := range sts {
+			errs := v.RunAll(st)
 			if len(errs) > 0 {
 				spew.Dump(errs)
 			}
@@ -59,9 +59,9 @@ var analyzeCommand = &cobra.Command{
 
 		for _, tag := range tags {
 			var buf strings.Builder
-			for _, s := range ss {
+			for _, st := range sts {
 
-				for _, d := range s.Predictions {
+				for _, d := range st.Predictions {
 					if d.ShouldExclude() {
 						continue // only print out the ones with cause
 					}
