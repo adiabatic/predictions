@@ -15,14 +15,6 @@
 package cmd
 
 import (
-	"fmt"
-	"os"
-	"sort"
-	"strings"
-
-	"github.com/adiabatic/predictions/formatters"
-	"github.com/adiabatic/predictions/streams"
-	"github.com/davecgh/go-spew/spew"
 	"github.com/spf13/cobra"
 )
 
@@ -36,58 +28,9 @@ func initConfig() {
 
 var rootCommand = &cobra.Command{
 	Use:                   "predictions",
-	Short:                 "predictions finds out how well-calibrated your predictions are",
+	Short:                 "predictions — finds out how well-calibrated your predictions are",
 	DisableFlagsInUseLine: true,
-	Args:                  cobra.MinimumNArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
-		ss, err := streams.StreamsFromFiles(args)
-		if err != nil {
-			fmt.Fprintln(os.Stderr, err)
-			os.Exit(1)
-		}
-
-		// fmt.Println("the streams:")
-		// spew.Dump(streams)
-
-		tags := streams.TagsUsed(ss)
-		sort.Strings(tags)
-		var v streams.Validator
-
-		for _, s := range ss {
-			errs := v.RunAll(s)
-			if len(errs) > 0 {
-				spew.Dump(errs)
-			}
-		}
-
-		for _, tag := range tags {
-			var buf strings.Builder
-			for _, s := range ss {
-
-				for _, d := range s.Predictions {
-					if d.ShouldExclude() {
-						continue // only print out the ones with cause
-					}
-
-					if d.HasTag(tag) {
-						buf.WriteString(formatters.MarkdownFromDocument(d))
-					}
-				}
-			}
-
-			if buf.Len() > 0 {
-				fmt.Println("#", tag)
-				fmt.Println()
-				fmt.Println(buf.String())
-			}
-		}
+		cmd.Help()
 	},
-}
-
-// Execute runs the root command.
-func Execute() {
-	if err := rootCommand.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
 }
