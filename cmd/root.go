@@ -15,10 +15,10 @@
 package cmd
 
 import (
-	"bytes"
 	"fmt"
 	"os"
 	"sort"
+	"strings"
 
 	"github.com/adiabatic/predictions/formatters"
 	"github.com/adiabatic/predictions/streams"
@@ -61,7 +61,7 @@ var rootCommand = &cobra.Command{
 		}
 
 		for _, tag := range tags {
-			buf := &bytes.Buffer{}
+			var buf strings.Builder
 			for _, s := range ss {
 
 				for _, d := range s.Predictions {
@@ -70,7 +70,7 @@ var rootCommand = &cobra.Command{
 					}
 
 					if d.HasTag(tag) {
-						fmt.Fprintln(buf, formatters.MarkdownFromDocument(d))
+						buf.WriteString(formatters.MarkdownFromDocument(d))
 					}
 				}
 			}
@@ -80,9 +80,7 @@ var rootCommand = &cobra.Command{
 				fmt.Println()
 				fmt.Println(buf.String())
 			}
-
 		}
-
 	},
 }
 
