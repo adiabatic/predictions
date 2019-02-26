@@ -22,11 +22,11 @@ import (
 
 // Analysis is a dump of information all about a list of Streams.
 type Analysis struct {
-	Everything AnalysisUnit // title is ""
+	Everything AnalyzedDocuments // title is ""
 
-	EverythingByKey []AnalysisUnit // title is title + scope
+	EverythingByKey []AnalyzedDocuments // title is title + scope
 
-	EverythingByTag []AnalysisUnit // title is tag
+	EverythingByTag []AnalyzedDocuments // title is tag
 
 }
 
@@ -34,7 +34,30 @@ type Analysis struct {
 type AnalysisUnit struct {
 	Title              string
 	SquaredDifferences []float64 // (f_t-o_t)^2
+
+	Called int //   predicted correctly
+	Missed int //   predicted incorrectly
+
+	Ongoing  int //   no “happened” value
+	Excluded int //   has “cause for exclusion” key with value
+
+	Unscorable int // lacks claim, lacks confidence, or both
 }
+
+// An AnalyzedDocuments contains both an AnalysisUnit and a slice of PredictionDocument.
+type AnalyzedDocuments struct {
+	AnalysisUnit AnalysisUnit
+	Documents    []streams.PredictionDocument
+}
+
+// Total returns the sum of the scored items, the unscored items, and the unscorable items.
+func (au *AnalysisUnit) Total() int { return au.Scored() + au.Unscored() + au.Unscorable }
+
+// Scored returns the sum of the called items and the missed items.
+func (au *AnalysisUnit) Scored() int { return au.Called + au.Missed }
+
+// Unscored returns the sum of the ongoing and the excluded items.
+func (au *AnalysisUnit) Unscored() int { return au.Ongoing + au.Excluded }
 
 // Add adds a prediction to the unit.
 //
@@ -54,19 +77,11 @@ func (au *AnalysisUnit) Add(confidence float64, happened bool) {
 	au.SquaredDifferences = append(au.SquaredDifferences, ret)
 }
 
-// Count returns the number of added predictions.
-func (au *AnalysisUnit) Count() int {
-	if au == nil {
-		return 0
-	}
-	return len(au.SquaredDifferences)
-}
-
 // BrierScore calculates the Brier score of added squared differences.
 //
 // Returns NaN if no squared differences have been added.
 func (au *AnalysisUnit) BrierScore() float64 {
-	if au.Count() == 0 {
+	if len(au.SquaredDifferences) == 0 {
 		return math.NaN()
 	}
 	var sum float64
@@ -81,20 +96,57 @@ func (au *AnalysisUnit) BrierScore() float64 {
 func Analyze(sts []streams.Stream) Analysis {
 	ret := Analysis{}
 
-	ret.Everything = AnalyzeOnly(sts, Everything)
+	ret.Everything = Only(sts, Everything)
 
 	tagsUsed := streams.TagsUsed(sts)
 	for _, tag := range tagsUsed {
 		ret.EverythingByTag = append(ret.EverythingByTag,
-			AnalyzeOnly(sts, MatchingTag(tag)),
+			Only(sts, MatchingTag(tag)),
 		)
 	}
 
 	keysUsed := streams.KeysUsed(sts)
 	for _, key := range keysUsed {
 		ret.EverythingByKey = append(ret.EverythingByKey,
-			AnalyzeOnly(sts, MatchingKey(key)),
+			Only(sts, MatchingKey(key)),
 		)
+	}
+
+	return ret
+}
+
+// Only analyzes only predictions in streams that pass a filter.
+func Only(sts []streams.Stream, f Filter) AnalyzedDocuments {
+	ret := AnalyzedDocuments{}
+
+	for _, st := range sts {
+		for _, p := range st.Predictions {
+			if !f(p) {
+				continue
+			}
+
+			if p.Claim == "" || p.Confidence == nil {
+				ret.AnalysisUnit.Unscorable++
+				continue
+			}
+
+			if p.Happened == nil {
+				if p.CauseForExclusion != "" {
+					ret.AnalysisUnit.Excluded++
+					continue
+				}
+				ret.AnalysisUnit.Ongoing++
+				continue
+			}
+
+			if *(p.Happened) {
+				ret.AnalysisUnit.Called++
+			} else {
+				ret.AnalysisUnit.Missed++
+			}
+
+			ret.AnalysisUnit.Add(*(p.Confidence), *(p.Happened))
+		}
 	}
 
 	return ret
@@ -105,27 +157,6 @@ type Filter func(streams.PredictionDocument) bool
 
 // Everything is a Filter that filters nothing out.
 func Everything(_ streams.PredictionDocument) bool { return true }
-
-// AnalyzeOnly analyzes only predictions in streams that pass a filter.
-func AnalyzeOnly(sts []streams.Stream, f Filter) AnalysisUnit {
-	ret := AnalysisUnit{}
-
-	for _, st := range sts {
-		for _, p := range st.Predictions {
-			if p.Claim == "" || p.Happened == nil || p.Confidence == nil {
-				continue
-			}
-
-			if !f(p) {
-				continue
-			}
-
-			ret.Add(*(p.Confidence), *(p.Happened))
-		}
-	}
-
-	return ret
-}
 
 // MatchingTag returns a Filter that returns true if the prediction’s tag matches the given tag.
 func MatchingTag(tag string) Filter {
