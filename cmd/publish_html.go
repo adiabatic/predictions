@@ -22,6 +22,7 @@ import (
 
 	"gopkg.in/russross/blackfriday.v2"
 
+	"github.com/adiabatic/predictions/analyze"
 	"github.com/adiabatic/predictions/streams"
 	"github.com/spf13/cobra"
 )
@@ -158,6 +159,10 @@ const htmlTemplate = `<!DOCTYPE html>
 		{{ end }}
 	</section>
 	{{ end }}
+
+	<section>
+
+	</section>
 </body>
 </html>
 
@@ -168,6 +173,7 @@ type payload struct {
 	Scope     string
 	PageTitle string
 	Streams   []streams.Stream
+	Analysis  analyze.Analysis
 }
 
 var publishHTMLCommand = &cobra.Command{
@@ -212,6 +218,8 @@ var publishHTMLCommand = &cobra.Command{
 				return template.HTML(s)
 			},
 		}
+
+		p.Analysis = analyze.Analyze(sts)
 
 		t := template.Must(template.New("whatever").Funcs(funcs).Parse(htmlTemplate))
 		err = t.Execute(os.Stdout, p)
