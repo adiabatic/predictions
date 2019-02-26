@@ -62,6 +62,8 @@ type PredictionDocument struct {
 	Hash              bool
 	Salt              string
 	Notes             string
+
+	Parent *Stream
 }
 
 // ShouldExclude returns true if the receiver should be excluded from stats calculation.
@@ -116,6 +118,7 @@ func fromReaderWithFilename(r io.Reader, filename string) (Stream, error) {
 		if err != nil {
 			break
 		}
+		pd.Parent = &s
 		pds = append(pds, pd)
 	}
 	if err != io.EOF {
@@ -263,7 +266,7 @@ func (sv *Validator) AllConfidencesSensible(s Stream) []error {
 
 // other stuff
 
-func deduplicateTags(ss []string) []string {
+func deduplicateStrings(ss []string) []string {
 	seen := make(map[string]struct{}, len(ss))
 	j := 0
 	for _, v := range ss {
@@ -278,14 +281,26 @@ func deduplicateTags(ss []string) []string {
 }
 
 // TagsUsed returns a list of all tags used in the given slice of stream.Stream.
-func TagsUsed(ss []Stream) []string {
+func TagsUsed(sts []Stream) []string {
 	ret := make([]string, 0)
-	for _, s := range ss {
+	for _, s := range sts {
 		for _, p := range s.Predictions {
 			for _, t := range p.Tags {
 				ret = append(ret, t)
 			}
 		}
 	}
-	return deduplicateTags(ret)
+	return deduplicateStrings(ret)
+}
+
+// KeysUsed returns a list of all keys used in the given Streams.
+//
+// A “key”, here, is the title + scope of a given stream.
+func KeysUsed(sts []Stream) []string {
+	ret := make([]string, 0)
+	for _, s := range sts {
+		ret = append(ret, s.Metadata.Title+s.Metadata.Scope)
+	}
+	return deduplicateStrings(ret)
+
 }

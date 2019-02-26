@@ -77,10 +77,25 @@ func (au *AnalysisUnit) BrierScore() float64 {
 	return sum
 }
 
+// Analyze calculates Brier scores for the given streams.
 func Analyze(sts []streams.Stream) Analysis {
 	ret := Analysis{}
 
 	ret.Everything = AnalyzeOnly(sts, Everything)
+
+	tagsUsed := streams.TagsUsed(sts)
+	for _, tag := range tagsUsed {
+		ret.EverythingByTag = append(ret.EverythingByTag,
+			AnalyzeOnly(sts, MatchingTag(tag)),
+		)
+	}
+
+	keysUsed := streams.KeysUsed(sts)
+	for _, key := range keysUsed {
+		ret.EverythingByKey = append(ret.EverythingByKey,
+			AnalyzeOnly(sts, MatchingKey(key)),
+		)
+	}
 
 	return ret
 }
@@ -110,4 +125,29 @@ func AnalyzeOnly(sts []streams.Stream, f Filter) AnalysisUnit {
 	}
 
 	return ret
+}
+
+// MatchingTag returns a Filter that returns true if the prediction’s tag matches the given tag.
+func MatchingTag(tag string) Filter {
+	return func(d streams.PredictionDocument) bool {
+		for _, predictionTag := range d.Tags {
+			if tag == predictionTag {
+				return true
+			}
+		}
+		return false
+	}
+}
+
+// MatchingKey returns a Filter that returns true if the prediction’s key matches the given key.
+func MatchingKey(key string) Filter {
+	return func(d streams.PredictionDocument) bool {
+		if d.Parent == nil {
+			if key == "" {
+				return true
+			}
+		}
+		return key == d.Parent.Metadata.Title+d.Parent.Metadata.Scope
+
+	}
 }
