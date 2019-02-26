@@ -15,7 +15,9 @@
 package analyze
 
 import (
+	"fmt"
 	"math"
+	"os"
 
 	"github.com/adiabatic/predictions/streams"
 )
@@ -125,6 +127,8 @@ func Only(sts []streams.Stream, f Filter) AnalyzedDocuments {
 				continue
 			}
 
+			ret.Documents = append(ret.Documents, p)
+
 			if p.Claim == "" || p.Confidence == nil {
 				ret.AnalysisUnit.Unscorable++
 				continue
@@ -147,6 +151,11 @@ func Only(sts []streams.Stream, f Filter) AnalyzedDocuments {
 
 			ret.AnalysisUnit.Add(*(p.Confidence), *(p.Happened))
 		}
+	}
+
+	if len(ret.AnalysisUnit.SquaredDifferences) != ret.AnalysisUnit.Scored() {
+		fmt.Fprintln(os.Stderr, "logic error: squared differences and scored items differ")
+		os.Exit(4)
 	}
 
 	return ret

@@ -27,6 +27,8 @@
 
 			border: thin solid gray;
 			border-radius: var(--radius);
+
+            padding: 0;
 		}
 
 		.document > * {
@@ -101,15 +103,20 @@
 	</style>
 </head>
 <body>
-	{{ range .Streams }}
+	{{ with .Analysis.Everything }}
+        {{ template "analyzeddocuments" . }}
+    {{ end }}
+</body>
+</html>
+{{- end }}
+{{ define "analyzeddocuments" }}
 	<section>
 		<hgroup>
-			{{ with .Metadata.Title }}<h1>{{ . }}</h1>{{ end }}
-			{{ with .Metadata.Scope }}<h2>{{ . }}</h2>{{ end }}
+			{{ with .AnalysisUnit.Title }}<h1>{{ . }}</h1>{{ end }}
 		</hgroup>
 
         <section class='predictions'>
-            {{ range .Predictions }}
+            {{ range .Documents }}
             <section class='document'>
                 <div class='percent center-child'><div>{{ .Confidence }}%</div></div>
                 <div class='result {{ printf "%v" (troolToString .Happened) }} center-child'><div>
@@ -133,11 +140,5 @@
             …
         </section>
 	</section>
-	{{ end }}
 
-	<section>
-
-	</section>
-</body>
-</html>
-{{- end }}
+{{ end }}
