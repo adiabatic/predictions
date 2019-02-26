@@ -14,7 +14,11 @@
 
 package analyze
 
-import "math"
+import (
+	"math"
+
+	"github.com/adiabatic/predictions/streams"
+)
 
 // Analysis is a dump of information all about a list of Streams.
 type Analysis struct {
@@ -71,4 +75,39 @@ func (au *AnalysisUnit) BrierScore() float64 {
 	}
 
 	return sum
+}
+
+func Analyze(sts []streams.Stream) Analysis {
+	ret := Analysis{}
+
+	ret.Everything = AnalyzeOnly(sts, Everything)
+
+	return ret
+}
+
+// A Filter removes predictions from consideration if the predicate returns false.
+type Filter func(streams.PredictionDocument) bool
+
+// Everything is a Filter that filters nothing out.
+func Everything(_ streams.PredictionDocument) bool { return true }
+
+// AnalyzeOnly analyzes only predictions in streams that pass a filter.
+func AnalyzeOnly(sts []streams.Stream, f Filter) AnalysisUnit {
+	ret := AnalysisUnit{}
+
+	for _, st := range sts {
+		for _, p := range st.Predictions {
+			if p.Claim == "" || p.Happened == nil || p.Confidence == nil {
+				continue
+			}
+
+			if !f(p) {
+				continue
+			}
+
+			ret.Add(*(p.Confidence), *(p.Happened))
+		}
+	}
+
+	return ret
 }
