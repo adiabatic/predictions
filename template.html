@@ -2,80 +2,80 @@
 <!DOCTYPE html>
 <html lang='en'>
 <head>
-	<meta charset='UTF-8'>
-	<title>{{ .PageTitle }}</title>
-	<style>
-		html {
-		    font-family: system-ui, sans-serif;
-			--radius: 0rem;
-			--border-style-internal: thin dotted gray;
-		}
+    <meta charset='UTF-8'>
+    <title>{{ .PageTitle }}</title>
+    <style>
+        html {
+            font-family: system-ui, sans-serif;
+            --radius: 0rem;
+            --border-style-internal: thin dotted gray;
+        }
 
-		section {
-			padding: 0 .5rem;
-		}
-		
-		.document {
+        section {
+            padding: 0 .5rem;
+        }
+        
+        .document {
             display: grid;
-			
-			/* percent, claim, result, tags, notes, excluded */
-			grid-template:
-				'p c'
-				'r t'
-				'r n'
+            
+            /* percent, claim, result, tags, notes, excluded */
+            grid-template:
+                'p c'
+                'r t'
+                'r n'
                 'e e'
-				/ 15ch 1fr;
+                / 15ch 1fr;
 
-			border: thin solid gray;
-			border-radius: var(--radius);
+            border: thin solid gray;
+            border-radius: var(--radius);
 
             padding: 0;
-		}
+        }
 
-		.document > * {
-			background: #eee;
-			padding: .25rem;
-		}
+        .document > * {
+            background: #eee;
+            padding: .25rem;
+        }
 
-		.percent {
-			grid-area: p;
-			font-size: 300%;
-			font-weight: 900;
-			text-align: center;
-			border-top-left-radius: var(--radius);
+        .percent {
+            grid-area: p;
+            font-size: 300%;
+            font-weight: 900;
+            text-align: center;
+            border-top-left-radius: var(--radius);
 
-			border-bottom: var(--border-style-internal);
-			border-right: var(--border-style-internal);
-		}
+            border-bottom: var(--border-style-internal);
+            border-right: var(--border-style-internal);
+        }
 
-		.percent > div {
-			padding-bottom: .5rem;
-		}
+        .percent > div {
+            padding-bottom: .5rem;
+        }
 
-		.claim {
-			grid-area: c;
-			font-size: 200%;
+        .claim {
+            grid-area: c;
+            font-size: 200%;
 
-			border-top-right-radius: var(--radius);
-			border-bottom: var(--border-style-internal);
-		}
+            border-top-right-radius: var(--radius);
+            border-bottom: var(--border-style-internal);
+        }
 
-		.result {
-			grid-area: r;
+        .result {
+            grid-area: r;
 
-			border-bottom-left-radius: var(--radius);
-			border-right: var(--border-style-internal);
-		}
+            border-bottom-left-radius: var(--radius);
+            border-right: var(--border-style-internal);
+        }
 
-		.result.true {
-			background: hsl(120, 50%, 90%);
-			color: hsl(120, 50%, 33%);
-		}
+        .result.true {
+            background: hsl(120, 50%, 90%);
+            color: hsl(120, 50%, 33%);
+        }
 
-		.result.false {
-			background: hsl(0, 50%, 90%);
-			color: hsl(0, 50%, 33%);
-		}
+        .result.false {
+            background: hsl(0, 50%, 90%);
+            color: hsl(0, 50%, 33%);
+        }
 
         .result.ongoing {
             /* the default is fine, really */
@@ -86,18 +86,18 @@
             background: black;
         }
 
-		.tags {
-			grid-area: t;
-			color: #666;
+        .tags {
+            grid-area: t;
+            color: #666;
 
-			border-bottom: var(--border-style-internal);
+            border-bottom: var(--border-style-internal);
 
-		}
+        }
 
-		.notes {
-			grid-area: n;
-			border-bottom-right-radius: var(--radius);
-		}
+        .notes {
+            grid-area: n;
+            border-bottom-right-radius: var(--radius);
+        }
 
         .notes :first-child {
             margin-top: 0;
@@ -114,57 +114,57 @@
         /* Analysis */
 
         .analysis {
-			font-feature-settings: "tnum";
-		}
+            font-feature-settings: "tnum";
+        }
 
-		.analysis th,
-		.analysis td {
-			text-align: right;
-		}
+        .analysis th,
+        .analysis td {
+            text-align: right;
+        }
 
-		.analysis td:first-of-type {
-			text-align: right;
-		}
+        .analysis td:first-of-type {
+            text-align: right;
+        }
 
-		.analysis .outdented {
-			padding-right: 1em;
-		}
+        .analysis .outdented {
+            padding-right: 1em;
+        }
 
-		.brier-explanation {
-			color: hsl(0, 0%, 33%);
-			text-align: justify;
-			-webkit-hyphens: auto;
-			hyphens: auto;
-		}
+        .brier-explanation {
+            color: hsl(0, 0%, 33%);
+            text-align: justify;
+            -webkit-hyphens: auto;
+            hyphens: auto;
+        }
 
 
         /* utility classes */
 
-		.center-child {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
+        .center-child {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-		.center-child-vertically {
-			display: flex;
-			align-items: center;
-			justify-content: start;
-		}
-	</style>
+        .center-child-vertically {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+        }
+    </style>
 </head>
 <body>
-	{{ with .Analysis.Everything }}
+    {{ with .Analysis.Everything }}
         {{ template "analyzeddocuments" . }}
     {{ end }}
 </body>
 </html>
 {{- end }}
 {{ define "analyzeddocuments" }}
-	<section>
-		<hgroup>
-			{{ with .AnalysisUnit.Title }}<h1>{{ . }}</h1>{{ end }}
-		</hgroup>
+    <section>
+        <hgroup>
+            {{ with .AnalysisUnit.Title }}<h1>{{ . }}</h1>{{ end }}
+        </hgroup>
 
         <section class='predictions'>
             {{ range .Documents }}
@@ -214,6 +214,6 @@
             <p class='brier-explanation'>Brier scores range from 0 to 1, inclusive. A Brier score of 0 means you’re 100% confident every time and everything you predict happens. A Brier score of 1 means you’re 100% confident every time and you’re wrong every single time. If you estimate that everything has a 50/50 chance of happening, your Brier score will be .25 regardless of whatever happens.</p>
         </section>
         {{ end }}
-	</section>
+    </section>
 
 {{ end }}
