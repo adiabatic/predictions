@@ -61,6 +61,36 @@ func (au *AnalysisUnit) Scored() int { return au.Called + au.Missed }
 // Unscored returns the sum of the ongoing and the excluded items.
 func (au *AnalysisUnit) Unscored() int { return au.Ongoing + au.Excluded }
 
+func (au *AnalysisUnit) OfTotalScored() float64 {
+	return 100.0 * float64(au.Scored()) / float64(au.Total())
+}
+
+func (au *AnalysisUnit) OfTotalCalled() float64 {
+	return 100.0 * float64(au.Called) / float64(au.Total())
+}
+
+func (au *AnalysisUnit) OfTotalMissed() float64 {
+	return 100.0 * float64(au.Missed) / float64(au.Total())
+}
+
+func (au *AnalysisUnit) OfScoredCalled() float64 {
+	return 100.0 * float64(au.Called) / float64(au.Scored())
+}
+
+func (au *AnalysisUnit) OfScoredMissed() float64 {
+	return 100.0 * float64(au.Missed) / float64(au.Scored())
+}
+
+func (au *AnalysisUnit) OfTotalUnscored() float64 {
+	return 100.0 * float64(au.Unscored()) / float64(au.Total())
+}
+func (au *AnalysisUnit) OfUnscoredOngoing() float64 {
+	return 100.0 * float64(au.Ongoing) / float64(au.Unscored())
+}
+func (au *AnalysisUnit) OfUnscoredExcluded() float64 {
+	return 100.0 * float64(au.Excluded) / float64(au.Unscored())
+}
+
 // Add adds a prediction to the unit.
 //
 // confidence must be on [0, 1].
@@ -91,7 +121,7 @@ func (au *AnalysisUnit) BrierScore() float64 {
 		sum += d
 	}
 
-	return sum
+	return sum / float64(len(au.SquaredDifferences))
 }
 
 // Analyze calculates Brier scores for the given streams.
@@ -149,7 +179,7 @@ func Only(sts []streams.Stream, f Filter) AnalyzedDocuments {
 				ret.AnalysisUnit.Missed++
 			}
 
-			ret.AnalysisUnit.Add(*(p.Confidence), *(p.Happened))
+			ret.AnalysisUnit.Add(float64(*(p.Confidence))/100.0, *(p.Happened))
 		}
 	}
 

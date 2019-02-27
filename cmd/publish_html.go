@@ -80,6 +80,9 @@ var publishHTMLCommand = &cobra.Command{
 			"safeHTML": func(s string) template.HTML {
 				return template.HTML(s)
 			},
+			"refAU": func(au analyze.AnalysisUnit) *analyze.AnalysisUnit {
+				return &au
+			},
 		}
 
 		p.Analysis = analyze.Analyze(sts)
