@@ -62,6 +62,7 @@ var publishHTMLCommand = &cobra.Command{
 		p.Streams = sts
 
 		funcs := template.FuncMap{
+			// a three-valued bool should be a “trool”, right?
 			"troolToString": func(v *bool) string {
 				switch {
 				case v == nil:
