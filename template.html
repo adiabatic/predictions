@@ -157,6 +157,14 @@
     {{ with .Analysis.Everything }}
         {{ template "analyzeddocuments" . }}
     {{ end }}
+
+    {{ range .Analysis.EverythingByKey }}
+        {{ template "analyzeddocuments" . }}
+    {{ end }}
+
+    {{ range .Analysis.EverythingByTag }}
+        {{ template "analyzeddocuments" . }}
+    {{ end }}
 </body>
 </html>
 {{- end }}
@@ -209,7 +217,7 @@
                 <tr><th scope='row'>of total, Unscored:<td><td>{{ .Unscored }}<td>{{ .OfTotalUnscored | printf "(%.2f%%)"}}
                 <tr><th scope='row'>of unscored, Ongoing:<td><td><td><td>{{ .Ongoing }}<td>{{ .OfUnscoredOngoing | printf "(%.2f%%)"}}
                 <tr><th scope='row'>of unscored, Excluded:<td><td><td><td>{{ .Excluded }}<td>{{ .OfUnscoredExcluded | printf "(%.2f%%)"}}
-                <tr><th scope='row'>Brier score:<td>{{ .BrierScore | printf "%.2f" }}
+                <tr><th scope='row'>Brier score:<td colspan='2'>{{ .BrierScore | printf "%.4f" }}
             </table>
             <p class='brier-explanation'>Brier scores range from 0 to 1, inclusive. A Brier score of 0 means you’re 100% confident every time and everything you predict happens. A Brier score of 1 means you’re 100% confident every time and you’re wrong every single time. If you estimate that everything has a 50/50 chance of happening, your Brier score will be .25 regardless of whatever happens.</p>
         </section>

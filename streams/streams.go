@@ -295,11 +295,11 @@ func TagsUsed(sts []Stream) []string {
 
 // KeysUsed returns a list of all keys used in the given Streams.
 //
-// A “key”, here, is the title + scope of a given stream.
+// A “key”, here, is the title and scope of a given stream, with a space in between.
 func KeysUsed(sts []Stream) []string {
 	ret := make([]string, 0)
 	for _, s := range sts {
-		ret = append(ret, s.Metadata.Title+s.Metadata.Scope)
+		ret = append(ret, s.Metadata.Title+" "+s.Metadata.Scope)
 	}
 	return deduplicateStrings(ret)
 

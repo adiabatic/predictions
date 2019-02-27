@@ -129,19 +129,21 @@ func Analyze(sts []streams.Stream) Analysis {
 	ret := Analysis{}
 
 	ret.Everything = Only(sts, Everything)
+	ret.Everything.AnalysisUnit.Title = "Everything"
 
 	tagsUsed := streams.TagsUsed(sts)
 	for _, tag := range tagsUsed {
-		ret.EverythingByTag = append(ret.EverythingByTag,
-			Only(sts, MatchingTag(tag)),
-		)
+		ds := Only(sts, MatchingTag(tag))
+		ds.AnalysisUnit.Title = fmt.Sprintf("Tag: %s", tag)
+		ret.EverythingByTag = append(ret.EverythingByTag, ds)
+
 	}
 
 	keysUsed := streams.KeysUsed(sts)
 	for _, key := range keysUsed {
-		ret.EverythingByKey = append(ret.EverythingByKey,
-			Only(sts, MatchingKey(key)),
-		)
+		ds := Only(sts, MatchingKey(key))
+		ds.AnalysisUnit.Title = key
+		ret.EverythingByKey = append(ret.EverythingByKey, ds)
 	}
 
 	return ret
@@ -217,7 +219,7 @@ func MatchingKey(key string) Filter {
 				return true
 			}
 		}
-		return key == d.Parent.Metadata.Title+d.Parent.Metadata.Scope
+		return key == d.Parent.Metadata.Title+" "+d.Parent.Metadata.Scope
 
 	}
 }
