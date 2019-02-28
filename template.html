@@ -37,7 +37,6 @@
         
         html {
             font-family: system-ui, sans-serif;
-            --radius: 0rem;
             --border-style-internal: thin dotted gray;
 
 			color: var(--color-font-primary);
@@ -61,16 +60,13 @@
         .document {
             display: grid;
             
-            /* percent, claim, result, tags, notes, excluded */
+            /* percent, claim, result, metadata */
             grid-template:
                 'p c'
-                'r t'
-                'r n'
-                'e e'
+                'r m'
                 / 15ch 1fr;
 
             border: thin solid gray;
-            border-radius: var(--radius);
 
             padding: 0;
         }
@@ -87,7 +83,6 @@
             font-size: 300%;
             font-weight: 900;
             text-align: center;
-            border-top-left-radius: var(--radius);
 
             border-bottom: var(--border-style-internal);
             border-right: var(--border-style-internal);
@@ -101,14 +96,12 @@
             grid-area: c;
             font-size: 200%;
 
-            border-top-right-radius: var(--radius);
             border-bottom: var(--border-style-internal);
         }
 
         .result {
             grid-area: r;
 
-            border-bottom-left-radius: var(--radius);
             border-right: var(--border-style-internal);
         }
 
@@ -132,17 +125,50 @@
             background: black;
         }
 
-        .tags {
-            grid-area: t;
+        .metadata {
+            grid-area: m;
 
-			color: var(--color-font-tertiary);
+            display: grid;
+            grid-template:
+                'tagsl  tags'
+                'notesl notes'
+                'cfel   cfe'
+                / min-content auto;
 
+            padding: 0;
+        }
+
+        .metadata div {
             border-bottom: var(--border-style-internal);
+            padding: .5ch;
+        }
+
+        .metadata div:last-child,
+        .metadata div:nth-last-child(2) {
+            border-bottom: none;
+        }
+
+        .label {
+            text-align: right;
+            font-weight: bold;
+        }
+
+        /* inside the metadata */
+
+        .tagsLabel {
+            grid-area: tagsl;
+        }
+        .tags {
+            grid-area: tags;
+			color: var(--color-font-tertiary);
+        }
+
+        .notesLabel {
+            grid-area: notesl;
         }
 
         .notes {
-            grid-area: n;
-            border-bottom-right-radius: var(--radius);
+            grid-area: notes;
         }
 
         .notes :first-child {
@@ -153,8 +179,12 @@
             margin-bottom: 0;
         }
 
+        .cause-for-exclusionLabel {
+            grid-area: cfel;
+        }
+
         .cause-for-exclusion {
-            grid-area: e;
+            grid-area: cfe;
         }
 
         /* Analysis */
@@ -222,29 +252,7 @@
 
         <section class='predictions'>
             {{ range .Documents }}
-            <section class='document'>
-                <div class='percent center-child'><div>{{ .Confidence }}%</div></div>
-                {{ $class := "" }}
-                {{ $message := "" }}
-                {{- if eq (troolToString .Happened) "true" -}}
-                    {{ $class = "true" }}
-                    {{ $message = "called it" }}
-                {{- else if eq (troolToString .Happened) "false" -}}
-                    {{ $class = "false" }}
-                    {{ $message = "missed it" }}
-                {{- else if ne .CauseForExclusion "" -}}
-                    {{ $class = "excluded" }}
-                    {{ $message = "excluded" }}
-                {{- else -}}
-                    {{ $class = "ongoing" }}
-                    {{ $message = "ongoing" }}
-                {{- end -}}
-                <div class='result {{ $class }} center-child'><div>{{ $message }}</div></div>    
-                <div class='claim center-child-vertically'><div>{{ .Claim }}</div></div>
-                <div class='tags'>tags: {{ commaSeparate .Tags }}</div>
-                <div class='notes'>{{ .Notes | safeHTML }}</div>
-                {{ with .CauseForExclusion }}<div class='cause-for-exclusion'>{{ . }}</div>{{ end }}
-            </section>
+                {{ template "document" . }}
             {{ end }}
         </section>
 
@@ -270,4 +278,41 @@
         {{ end }}
     </section>
 
+{{ end }}
+
+{{ define "document" }}
+<section class='document'>
+    <div class='claim center-child-vertically'><div>{{ .Claim }}</div></div>
+    <div class='percent center-child'><div>{{ .Confidence }}%</div></div>
+    {{ $class := "" }}
+    {{ $message := "" }}
+    {{- if eq (troolToString .Happened) "true" -}}
+        {{ $class = "true" }}
+        {{ $message = "called it" }}
+    {{- else if eq (troolToString .Happened) "false" -}}
+        {{ $class = "false" }}
+        {{ $message = "missed it" }}
+    {{- else if ne .CauseForExclusion "" -}}
+        {{ $class = "excluded" }}
+        {{ $message = "excluded" }}
+    {{- else -}}
+        {{ $class = "ongoing" }}
+        {{ $message = "ongoing" }}
+    {{- end -}}
+    <div class='result {{ $class }} center-child'><div>{{ $message }}</div></div>  
+    <div class='metadata'>
+        {{ with .Tags }}
+        <div class='tagsLabel label'>Tags</div>
+        <div class='tags'>{{ commaSeparate . }}</div>
+        {{ end }}
+        {{ with .Notes }}
+        <div class='notesLabel label'>Notes</div>
+        <div class='notes'>{{ . | safeHTML }}</div>
+        {{ end }}
+        {{ with .CauseForExclusion }}
+        <div class='cause-for-exclusionLabel label'>Cause for exclusion</div>
+        <div class='cause-for-exclusion'>{{ . }}</div>
+        {{ end }}
+    </div>
+</section>
 {{ end }}
