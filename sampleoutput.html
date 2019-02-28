@@ -29,118 +29,158 @@
 			--color-font-excluded: black;
 			--color-background-excluded: white;
 		}
-
-		html {
-		    font-family: system-ui, sans-serif;
-			--radius: 0rem;
-			--border-style-internal: thin dotted gray;
+        
+        html {
+            font-family: system-ui, sans-serif;
+            --radius: 0rem;
+            --border-style-internal: thin dotted gray;
 
 			color: var(--color-font-primary);
 			background: var(--color-background-primary);
-		}
+        }
 
-		section {
-			padding: 0 .5rem;
-		}
-		
-		.document {
+        section {
+            padding: 0 .5rem;
+        }
+        
+        .document {
             display: grid;
-			
-			/* percent, claim, result, tags, notes */
-			grid-template:
-				'p c'
-				'r t'
-				'r n'
-				/ 15ch 1fr;
+            
+            /* percent, claim, result, tags, notes, excluded */
+            grid-template:
+                'p c'
+                'r t'
+                'r n'
+                'e e'
+                / 15ch 1fr;
 
-			border: thin solid gray;
-			border-radius: var(--radius);
+            border: thin solid gray;
+            border-radius: var(--radius);
 
-		}
+            padding: 0;
+        }
 
-		.document > * {
+        .document > * {
 			color: var(--color-font-secondary);
 			background: var(--color-background-secondary);
-			padding: .25rem;
-		}
 
-		.percent {
-			grid-area: p;
-			font-size: 300%;
-			font-weight: 900;
-			text-align: center;
-			border-top-left-radius: var(--radius);
+            padding: .25rem;
+        }
 
-			border-bottom: var(--border-style-internal);
-			border-right: var(--border-style-internal);
-		}
+        .percent {
+            grid-area: p;
+            font-size: 300%;
+            font-weight: 900;
+            text-align: center;
+            border-top-left-radius: var(--radius);
 
-		.percent > div {
-			padding-bottom: .5rem;
-		}
+            border-bottom: var(--border-style-internal);
+            border-right: var(--border-style-internal);
+        }
 
-		.claim {
-			grid-area: c;
-			font-size: 200%;
+        .percent > div {
+            padding-bottom: .5rem;
+        }
 
-			border-top-right-radius: var(--radius);
-			border-bottom: var(--border-style-internal);
-		}
+        .claim {
+            grid-area: c;
+            font-size: 200%;
 
-		.result {
-			grid-area: r;
+            border-top-right-radius: var(--radius);
+            border-bottom: var(--border-style-internal);
+        }
 
-			border-bottom-left-radius: var(--radius);
-			border-right: var(--border-style-internal);
-		}
+        .result {
+            grid-area: r;
 
-		.result.true {
+            border-bottom-left-radius: var(--radius);
+            border-right: var(--border-style-internal);
+        }
+
+        .result.true {
 			background: var(--color-background-called-it);
 			color: var(--color-text-called-it);
-		}
+        }
 
-		.tags {
-			grid-area: t;
+        .result.false {
+            background: var(--color-background-missed-it);
+            color: var(--color-background-missed-it);
+        }
+
+        .result.ongoing {
+            /* the default is fine, really */
+        }
+
+        .result.excluded {
+            color: white;
+            background: black;
+        }
+
+        .tags {
+            grid-area: t;
 
 			color: var(--color-font-tertiary);
 
-			border-bottom: var(--border-style-internal);
-		}
+            border-bottom: var(--border-style-internal);
+        }
 
-		.notes {
-			grid-area: n;
-			border-bottom-right-radius: var(--radius);
-		}
+        .notes {
+            grid-area: n;
+            border-bottom-right-radius: var(--radius);
+        }
 
-		.center-child {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-		
-		.analysis {
-			font-feature-settings: "tnum";
-		}
+        .notes :first-child {
+            margin-top: 0;
+        }
 
-		.analysis th,
-		.analysis td {
-			text-align: right;
-		}
+        .notes :last-child {
+            margin-bottom: 0;
+        }
 
-		.analysis td:first-of-type {
-			text-align: right;
-		}
+        .cause-for-exclusion {
+            grid-area: e;
+        }
 
-		.analysis .outdented {
-			padding-right: 1em;
-		}
+        /* Analysis */
 
-		.brier-explanation {
-			color: hsl(0, 0%, 33%);
-			text-align: justify;
-			-webkit-hyphens: auto;
-			hyphens: auto;
-		}
+        .analysis {
+            font-feature-settings: "tnum";
+        }
+
+        .analysis th,
+        .analysis td {
+            text-align: right;
+        }
+
+        .analysis td:first-of-type {
+            text-align: right;
+        }
+
+        .analysis .outdented {
+            padding-right: 1em;
+        }
+
+        .brier-explanation {
+            color: hsl(0, 0%, 33%);
+            text-align: justify;
+            -webkit-hyphens: auto;
+            hyphens: auto;
+        }
+
+
+        /* utility classes */
+
+        .center-child {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .center-child-vertically {
+            display: flex;
+            align-items: center;
+            justify-content: start;
+        }
 	</style>
 </head>
 <body>
