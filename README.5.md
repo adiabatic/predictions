@@ -8,18 +8,20 @@ This describes `predictions`’ file format. `predictions` uses [YAML][], so thi
 
 - `predictions` takes in multidocument YAML streams.
 - There is one YAML stream per file. A YAML stream (hereafter “file”) needs at least two documents in it to be interesting to `predictions`.
-- YAML documents are separated by “---” on lines by themselves.
+- The start of a YAML document is indicated with a “---” on a line by itself.
 - The first document in a file is a mapping that specifies metadata.
 - Mappings’ keys (the part before the “: ”) can be in any order.
 - Each document after the metadata document contains one top-level mapping with, potentially, all sorts of different values.
 - Each mapping after the metadata document is called a prediction.
 - Each prediction has both a claim and a confidence unless the author forgot one (or both).
+- Any given prediction may have things other than a claim and a confidence level in it.
 
 ## Example
 
 ```yaml
 ---
 # comments are great
+# the above start-of-document --- is  optional
 
 # if you have a colon in a mapping value,
 # you need to quote it somehow
@@ -58,7 +60,7 @@ claim: >
 confidence: 95
 tags: [games]
 # use | to preserve line breaks.
-# note that the “-” inside will be processed as Markdown.
+# note that the contents of `notes` is processed as Markdown.
 notes: |
   This game will get significantly harder if I finish
   any more Divine Beasts. I should:
@@ -79,7 +81,7 @@ A per-file salt used for hashing sensitive predictions.
 
 See “Salt-and-hash rationale” below for why you might want to do this.
 
-### `scope` (not yet implemented)
+### `scope`
 
 This restricts the scope of predictions to a particular domain. The idea of scopes is that they’re one-per-file so one can combine, say, 2018 predictions, 2019 predictions, and 2020 predictions in an invocation of `predictions` and see combined results with each year’s prediction labeled as such.
 
@@ -109,9 +111,12 @@ If some, but not all, of your predictions have tags, the untagged ones will be t
 
 ### `happened`
 
-Either a boolean (yes/no/true/false) or null (~). Use yes/true for something that did happen, no/false for something that definitely didn’t happen, and ~ for weird ambiguous results that you want to throw out of any analysis.
+If present, either true, false, or null. Use true for something that did happen, false for something that definitely didn’t happen. Use null for either:
 
-### `cause for exclusion` (name subject to change)
+- things that may yet happen (but haven’t happened yet)
+- for weird results that you want to exclude from consideration (see “cause for exclusion” below)
+
+### `cause for exclusion`
 
 A string. Put any explanation you want in it.
 
@@ -131,7 +136,7 @@ A per-prediction salt used for hashing sensitive predictions. If `salt` is speci
 
 See “salt-and-hash rationale” below for why you might want to do this.
 
-### `notes` (Markdown processing not yet implemented)
+### `notes`
 
 `notes` is for you to write notes about the prediction. Frequently, it’s helpful to write down why `happened` has the value it does. For example, if your claim is “I will weigh less than 185 pounds”, then it might be nice to write down the date you first dropped below 185 pounds. Similarly, if you’re trying to predict world events, it’s handy to link to newspaper articles substantiating whether your claim happened (or not).
 
