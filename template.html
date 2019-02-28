@@ -16,13 +16,17 @@
 			--color-font-tertiary: hsl(42, 0%, 90%);
 			--color-background-tertiary: var(--color-background-secondary);
 
+            --color-link: hsl(180, 50%, 75%);
+            --color-visited: hsl(270, 50%, 75%);
+
+
 			/* calls */
 
 			--color-font-called-it: hsl(120, 50%, 90%);
 			--color-background-called-it: hsl(120, 50%, 33%);
 
-			--color-font-missed-it: hsl(0, 50%, 33%);
-			--color-background-missed-it: hsl(0, 50%, 90%);
+			--color-font-missed-it: hsl(0, 50%, 90%);
+			--color-background-missed-it: hsl(0, 50%, 33%);
 
 			--color-font-ongoing: inherit;
 			--color-background-ongoing: inherit;
@@ -43,6 +47,16 @@
         section {
             padding: 0 .5rem;
         }
+
+        a:link {
+            color: var(--color-link);
+        }
+
+        a:visited {
+            color: var(--color-visited);
+        }
+
+        /* note that “document” here refers to a PredictionDocument (i.e. one prediction) */
         
         .document {
             display: grid;
@@ -105,11 +119,12 @@
 
         .result.false {
             background: var(--color-background-missed-it);
-            color: var(--color-background-missed-it);
+            color: var(--color-text-missed-it);
         }
 
         .result.ongoing {
-            /* the default is fine, really */
+            background: var(--color-background-secondary);
+			color: var(--color-text-secondary);
         }
 
         .result.excluded {
@@ -162,7 +177,7 @@
         }
 
         .brier-explanation {
-            color: hsl(0, 0%, 33%);
+            color: var(--color-text-tertiary);
             text-align: justify;
             -webkit-hyphens: auto;
             hyphens: auto;
