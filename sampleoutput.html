@@ -4,10 +4,39 @@
 	<meta charset='UTF-8'>
 	<title>Sample Output</title>
 	<style>
+		:root {
+			/* using the semi-magic value "42" for colors intended to be pure white/gray/black */
+			--color-font-primary: hsl(42, 0%, 95%);
+			--color-background-primary: hsl(42, 0%, 10%);
+
+			--color-font-secondary: var(--color-font-primary);
+			--color-background-secondary: hsl(42, 0%, 20%);
+
+			--color-font-tertiary: hsl(42, 0%, 90%);
+			--color-background-tertiary: var(--color-background-secondary);
+
+			/* calls */
+
+			--color-font-called-it: hsl(120, 50%, 90%);
+			--color-background-called-it: hsl(120, 50%, 33%);
+
+			--color-font-missed-it: hsl(0, 50%, 33%);
+			--color-background-missed-it: hsl(0, 50%, 90%);
+
+			--color-font-ongoing: inherit;
+			--color-background-ongoing: inherit;
+
+			--color-font-excluded: black;
+			--color-background-excluded: white;
+		}
+
 		html {
 		    font-family: system-ui, sans-serif;
 			--radius: 0rem;
 			--border-style-internal: thin dotted gray;
+
+			color: var(--color-font-primary);
+			background: var(--color-background-primary);
 		}
 
 		section {
@@ -26,10 +55,12 @@
 
 			border: thin solid gray;
 			border-radius: var(--radius);
+
 		}
 
 		.document > * {
-			background: #eee;
+			color: var(--color-font-secondary);
+			background: var(--color-background-secondary);
 			padding: .25rem;
 		}
 
@@ -64,16 +95,16 @@
 		}
 
 		.result.true {
-			background: hsl(120, 50%, 90%);
-			color: hsl(120, 50%, 50%);
+			background: var(--color-background-called-it);
+			color: var(--color-text-called-it);
 		}
 
 		.tags {
 			grid-area: t;
-			color: #666;
+
+			color: var(--color-font-tertiary);
 
 			border-bottom: var(--border-style-internal);
-
 		}
 
 		.notes {
