@@ -33,6 +33,10 @@
 
 			--color-font-excluded: black;
 			--color-background-excluded: white;
+
+            /* spacing */
+
+            --padding-text-inside-document: .5ch;
 		}
         
         html {
@@ -55,6 +59,18 @@
             color: var(--color-visited);
         }
 
+        .prediction-header {
+            font-size: 4em;
+            font-weight: 200;
+            margin-bottom: 1rem;
+        }
+
+        .post-prediction-header {
+            font-size: 2.5em;
+            font-weight: 200;
+
+        }
+
         /* note that “document” here refers to a PredictionDocument (i.e. one prediction) */
         
         .document {
@@ -64,16 +80,20 @@
             grid-template:
                 'p c'
                 'r m'
+                '. m'
                 / 15ch 1fr;
 
             border: thin solid gray;
 
+            margin: .5rem 0;
             padding: 0;
+
+			color: var(--color-font-secondary);
+			background: var(--color-background-secondary);
+
         }
 
         .document > * {
-			color: var(--color-font-secondary);
-			background: var(--color-background-secondary);
 
             padding: .25rem;
         }
@@ -85,7 +105,6 @@
             text-align: center;
 
             border-bottom: var(--border-style-internal);
-            border-right: var(--border-style-internal);
         }
 
         .percent > div {
@@ -96,13 +115,14 @@
             grid-area: c;
             font-size: 200%;
 
+            border-left: var(--border-style-internal);
             border-bottom: var(--border-style-internal);
         }
 
         .result {
             grid-area: r;
-
-            border-right: var(--border-style-internal);
+            border-bottom: var(--border-style-internal);
+            padding: var(--padding-text-inside-document);
         }
 
         .result.true {
@@ -140,7 +160,7 @@
 
         .metadata div {
             border-bottom: var(--border-style-internal);
-            padding: .5ch;
+            padding: var(--padding-text-inside-document);
         }
 
         .metadata div:last-child,
@@ -151,6 +171,7 @@
         .label {
             text-align: right;
             font-weight: bold;
+            border-left: var(--border-style-internal);
         }
 
         /* inside the metadata */
@@ -160,7 +181,7 @@
         .tagsLabel {
             grid-area: tagsl;
         }
-        
+
         .tags {
             grid-area: tags;
 			color: var(--color-font-tertiary);
@@ -194,6 +215,8 @@
 
         .analysis {
             font-feature-settings: "tnum";
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .analysis th,
@@ -237,21 +260,23 @@
         {{ template "analyzeddocuments" . }}
     {{ end }}
 
-    {{ range .Analysis.EverythingByKey }}
-        {{ template "analyzeddocuments" . }}
+    {{ if gt (len .Analysis.EverythingByKey) 1 }}
+        {{ range .Analysis.EverythingByKey }}
+            {{ template "analyzeddocuments" . }}
+        {{ end }}
     {{ end }}
 
-    {{ range .Analysis.EverythingByTag }}
-        {{ template "analyzeddocuments" . }}
+    {{ if gt (len .Analysis.EverythingByTag) 1 }}
+        {{ range .Analysis.EverythingByTag }}
+            {{ template "analyzeddocuments" . }}
+        {{ end }}
     {{ end }}
 </body>
 </html>
 {{- end }}
 {{ define "analyzeddocuments" }}
     <section>
-        <hgroup>
-            {{ with .AnalysisUnit.Title }}<h1>{{ . }}</h1>{{ end }}
-        </hgroup>
+        {{ with .AnalysisUnit.Title }}<h1 class='prediction-header'>{{ . }}</h1>{{ end }}
 
         <section class='predictions'>
             {{ range .Documents }}
@@ -261,7 +286,7 @@
 
         {{ with .AnalysisUnit | refAU }}
         <section class=''>
-            <h1>Analysis</h1>
+            <h1 class='post-prediction-header'>Analysis</h1>
             <table class='analysis'>
                 <tr><th scope='row'>Total:           <td>{{ .Total }}<td><td><td><td>
                 <tr><th scope='row'>of total, Called:<td><td>{{ .Called }}<td>{{ .OfTotalCalled | printf "(%.2f%%)"}}
@@ -304,6 +329,7 @@
     {{- end -}}
     <div class='result {{ $class }} center-child'><div>{{ $message }}</div></div>  
     <div class='metadata'>
+        {{/* TODO: add stuff for putting scopes in here */}}
         {{ with .Tags }}
         <div class='tagsLabel label'>Tags</div>
         <div class='tags'>{{ commaSeparate . }}</div>
