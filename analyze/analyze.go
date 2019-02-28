@@ -61,32 +61,42 @@ func (au *AnalysisUnit) Scored() int { return au.Called + au.Missed }
 // Unscored returns the sum of the ongoing and the excluded items.
 func (au *AnalysisUnit) Unscored() int { return au.Ongoing + au.Excluded }
 
+// OfTotalScored calculates the percent scored out of all the predictions made in this analysis unit.
 func (au *AnalysisUnit) OfTotalScored() float64 {
 	return 100.0 * float64(au.Scored()) / float64(au.Total())
 }
 
+// OfTotalCalled calcualtes the percent called (gotten right) out of all the predictions made in this analysis unit.
 func (au *AnalysisUnit) OfTotalCalled() float64 {
 	return 100.0 * float64(au.Called) / float64(au.Total())
 }
 
+// OfTotalMissed calculates the percent missed (gotten wrong) out of all the predictions made in this analysis unit.
 func (au *AnalysisUnit) OfTotalMissed() float64 {
 	return 100.0 * float64(au.Missed) / float64(au.Total())
 }
 
+// OfScoredCalled calculates the percent called (gotten right) out of all the scored predictions made in this analysis unit.
 func (au *AnalysisUnit) OfScoredCalled() float64 {
 	return 100.0 * float64(au.Called) / float64(au.Scored())
 }
 
+// OfScoredMissed calculates the percent missed (gotten wrong) out of all the scored predictions made in this analysis unit.
 func (au *AnalysisUnit) OfScoredMissed() float64 {
 	return 100.0 * float64(au.Missed) / float64(au.Scored())
 }
 
+// OfTotalUnscored calculates the percent unscored (whether because they’re open questions or excluded from consideration) out of all the predictions made in this analysis unit.
 func (au *AnalysisUnit) OfTotalUnscored() float64 {
 	return 100.0 * float64(au.Unscored()) / float64(au.Total())
 }
+
+// OfUnscoredOngoing calculates the percentage of ongoing (not answered yet) predictions out of all unscored predictions in this analysis unit.
 func (au *AnalysisUnit) OfUnscoredOngoing() float64 {
 	return 100.0 * float64(au.Ongoing) / float64(au.Unscored())
 }
+
+// OfUnscoredExcluded calculates the percentage of excluded (for cause) predictions out of all unscored predictions in this analysis unit.
 func (au *AnalysisUnit) OfUnscoredExcluded() float64 {
 	return 100.0 * float64(au.Excluded) / float64(au.Unscored())
 }
