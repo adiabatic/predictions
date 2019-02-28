@@ -31,6 +31,7 @@ func init() {
 var publishMarkdownCommand = &cobra.Command{
 	Use:                   "markdown",
 	Aliases:               []string{"m"},
+	Args:                  cobra.MinimumNArgs(1),
 	Short:                 "Formats your predictions in Markdown lists",
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
