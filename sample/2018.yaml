@@ -1,0 +1,70 @@
+---
+title: Predictions for a past year
+scope: in 2018
+metanotes: >
+  This YAML file is hard-wrapped to 80 characters, but I’m only bothering
+  to hard-wrap it because it looks better on GitHub that way. For files
+  I use for myself, I rely on my text editor to wrap and indent long lines
+  for me.
+---
+claim: I will read at least one book
+confidence: 95
+tags: [personal time]
+happened: true
+---
+claim: I will read at least two books
+confidence: 90
+tags: [personal time]
+happened: true
+---
+claim: I will read at least five books
+confidence: 70
+tags: [personal time]
+happened: false
+notes: |
+  I read:
+
+  - _Superforecasting_
+  - _The Obesity Code_
+  - _Inadequate Equilibria_
+
+  I also started _Thinking in Bets_ in 2018, but I’m choosing to not count
+  it because I didn’t finish it until 2019.
+metanotes: |
+  When I have a series of predictions for the same thing at different amounts,
+  I consolidate the supporting evidence for the “happened” value of the series
+  in the prediction that’s least likely to happen.
+---
+claim: I will not get a new computer
+confidence: 95
+tags: [commerce]
+happened: true
+notes: Didn’t need one. Didn’t get one.
+---
+claim: I will not get a new phone
+confidence: 90
+tags: [commerce]
+happened: true
+notes: I still like mine more than anything else on offer.
+---
+claim: >
+  Conditional on me getting a new phone,
+  the new phone will be from the same manufacturer
+confidence: 95
+tags: [commerce]
+happened: null
+cause for exclusion: I didn’t get a new phone.
+---
+claim: I will not fill up a physical journal
+confidence: 90
+tags: [personal time]
+happened: true
+notes: Still filling up my two.
+---
+claim: I will not switch text editors
+confidence: 90
+tags: [tooling]
+happened: null
+cause for exclusion: >
+  Underspecified question as I didn’t entirely stop using my old editor,
+  even though I’m using the new one more and more (I think).
