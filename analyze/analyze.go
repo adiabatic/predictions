@@ -30,6 +30,7 @@ type Analysis struct {
 
 	EverythingByTag []AnalyzedDocuments // title is tag
 
+	EverythingByConfidence []AnalyzedDocuments
 }
 
 // AnalysisUnit provides information on a subset of an Analysis.
