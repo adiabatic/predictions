@@ -35,11 +35,15 @@ import (
 func MarkdownFromDocument(d streams.PredictionDocument) string {
 	meat := fmt.Sprintf("%v: %v%%", d.Claim, *(d.Confidence))
 	withToppings := ""
-	if d.Happened == nil {
+
+	switch {
+	case d.Happened == nil && d.CauseForExclusion != "":
 		withToppings = fmt.Sprintf("- <i>%v</i>", meat)
-	} else if *(d.Happened) {
+	case d.Happened == nil:
 		withToppings = fmt.Sprintf("- %v", meat)
-	} else {
+	case *d.Happened == true:
+		withToppings = fmt.Sprintf("- <b>%v</b>", meat)
+	case *d.Happened == false:
 		withToppings = fmt.Sprintf("- <s>%v</s>", meat)
 	}
 
