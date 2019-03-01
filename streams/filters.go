@@ -46,6 +46,7 @@ func MatchingKey(key string) Filter {
 	}
 }
 
+// DocumentsMatching returns PredictionDocuments from streams that pass the given Filter.
 func DocumentsMatching(sts []Stream, f Filter) []PredictionDocument {
 	ret := make([]PredictionDocument, 0)
 	for _, st := range sts {
