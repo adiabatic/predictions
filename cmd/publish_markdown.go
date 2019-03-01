@@ -50,6 +50,6 @@ var publishMarkdownCommand = &cobra.Command{
 			}
 		}
 
-		fmt.Print(formatters.MarkdownFromStreams(sts))
+		fmt.Print(formatters.MarkdownFromStreams(sts, formatters.ForPublic(true)))
 	},
 }
