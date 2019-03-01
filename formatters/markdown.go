@@ -95,5 +95,19 @@ func MarkdownFromStreams(sts []streams.Stream, options ...Option) string {
 			buf.WriteString("\n")
 		}
 	}
+
+	tagsUsed := streams.TagsUsed(sts)
+	if len(tagsUsed) > 0 {
+		for _, tag := range tagsUsed {
+			fmt.Fprintf(&buf, "# %s\n\n", tag)
+
+			for _, d := range streams.DocumentsMatching(sts, streams.MatchingTag(tag)) {
+				buf.WriteString(MarkdownFromDocument(d))
+			}
+
+			buf.WriteString("\n")
+		}
+	}
+
 	return buf.String()
 }
