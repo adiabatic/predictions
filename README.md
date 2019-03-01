@@ -9,32 +9,17 @@ Not sure what this whole ‘predictions’ thing is? Have a look at [Scott Alexa
 
 ## Usage
 
-To get a nicely-formatted HTML page analyzing your predictions, run `predictions publish html foo.yaml`.
+To get a nicely-formatted HTML page analyzing your predictions, run `predictions publish html foo.yaml > out.html`.
 
-For more information on `predictions`’ commands and command-line flags, see [README.1.md][r1].
+For more information on `predictions`’ output types, commands, and command-line flags, see [README.1.md][r1].
 
 [r1]: ./README.1.md
 
-`predictions` always outputs to standard output, with errors and warnings printed to standard error. To get the output into a file, redirect standard output to a file with `>`, as in `predictions 2019.yaml > 2019.markdown`.
-
 ## The YAML file format
 
-In order to use `predictions` you’ll need to write one or more YAML files in a text editor. See `README.5.md` to learn what `predictions` expects in those files.
+In order to use `predictions` you’ll need to write one or more YAML files in a text editor. See [README.5.md][r5] to learn what `predictions` expects in those files.
 
-## Command-line flags
-
-### `-ot` (output type) (unimplemented)
-
-Sets the output type. Options:
-
-- `markdownsnippet`, useful for pasting into a blog post [like Scott Alexander’s][ssc2018]. Currently the default.
-- `html`, useful for seeing your predictions, nicely formatted, in a standalone HTML page.
-
-### `-Wall` (all warnings)
-
-Emits all warnings such as “your confidence level for \_\_\_\_\_\_ was 100%” (see [Infinite Certainty][ic] for why this is a bad thing).
-
-[ic]: https://www.readthesequences.com/Infinite-Certainty
+[r5]: ./README.5.md
 
 ## Salt-and-hash rationale
 

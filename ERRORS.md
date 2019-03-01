@@ -1,10 +1,10 @@
-# Errors and warnings
+# `predictions`’ errors and warnings
 
 <!-- markdownlint-disable MD038 -->
 
 ## cannot unmarshal !!str `…` into float64
 
-Whatever you wrote as a confidence isn’t recognized as such. Confidence levels need to be written as a number between 0 and 100, without the percent sign.
+Whatever you wrote, probably a confidence level, isn’t recognized as such. Confidence levels need to be written as a number between 0 and 100, without the percent sign.
 
 ## [error.claim.missing]
 
@@ -16,13 +16,14 @@ A prediction doesn’t have a confidence level in it. Confidence levels start wi
 
 ## [error.confidence.impossible]
 
-…
+Confidence levels need to be written as a number between 0 and 100, corresponding to confidence levels of 0% and 100%. While fractional confidence levels are permissible (if unwise), negative numbers and numbers over 100 make no sense.
 
 ## [warn.confidence.zero]
 
-…
+It’s a bad idea to claim that something has a 0% chance of happening. [Infinite Certainty][ic] explains why.
 
 ## [warn.confidence.unity]
 
-…
-(“unity” is a fancy name for “one”.)
+It’s a bad idea to claim that something has a 100% chance of happening. [Infinite Certainty][ic] explains why.
+
+[ic]: https://www.readthesequences.com/Infinite-Certainty
