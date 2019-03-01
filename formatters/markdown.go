@@ -66,14 +66,39 @@ func MarkdownFromStream(st streams.Stream) string {
 }
 
 // MarkdownFromStreams makes a Markdown-formatted version of a slice of streams.
-func MarkdownFromStreams(sts []streams.Stream) string {
+func MarkdownFromStreams(sts []streams.Stream, options ...Option) string {
 	var buf strings.Builder
 
+	o := markdownOptions{}
+	for _, f := range options {
+		f(&o)
+	}
+
 	// TODO: first by title/scope, then by each individual tag…
+	buf.WriteString("# Everything\n")
 	for _, st := range sts {
 		buf.WriteString(MarkdownFromStream(st))
 	}
 
 	buf.WriteString("\n")
+
+	keysUsed := streams.KeysUsed(sts)
+	if len(keysUsed) > 1 {
+
+	}
 	return buf.String()
+}
+
+// Option is the type used for Markdown-formatting options.
+type Option func(o *markdownOptions)
+
+// ForPublic is an option that says whether to sanitize the output for public consumption.
+func ForPublic(b bool) Option {
+	return func(o *markdownOptions) {
+		o.forPublic = b
+	}
+}
+
+type markdownOptions struct {
+	forPublic bool
 }

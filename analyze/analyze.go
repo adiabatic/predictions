@@ -139,12 +139,12 @@ func (au *AnalysisUnit) BrierScore() float64 {
 func Analyze(sts []streams.Stream) Analysis {
 	ret := Analysis{}
 
-	ret.Everything = Only(sts, Everything)
+	ret.Everything = Only(sts, streams.Everything)
 	ret.Everything.AnalysisUnit.Title = "Everything"
 
 	tagsUsed := streams.TagsUsed(sts)
 	for _, tag := range tagsUsed {
-		ds := Only(sts, MatchingTag(tag))
+		ds := Only(sts, streams.MatchingTag(tag))
 		ds.AnalysisUnit.Title = fmt.Sprintf("Tag: %s", tag)
 		ret.EverythingByTag = append(ret.EverythingByTag, ds)
 
@@ -152,7 +152,7 @@ func Analyze(sts []streams.Stream) Analysis {
 
 	keysUsed := streams.KeysUsed(sts)
 	for _, key := range keysUsed {
-		ds := Only(sts, MatchingKey(key))
+		ds := Only(sts, streams.MatchingKey(key))
 		ds.AnalysisUnit.Title = key
 		ret.EverythingByKey = append(ret.EverythingByKey, ds)
 	}
@@ -161,7 +161,7 @@ func Analyze(sts []streams.Stream) Analysis {
 }
 
 // Only analyzes only predictions in streams that pass a filter.
-func Only(sts []streams.Stream, f Filter) AnalyzedDocuments {
+func Only(sts []streams.Stream, f streams.Filter) AnalyzedDocuments {
 	ret := AnalyzedDocuments{}
 
 	for _, st := range sts {
@@ -202,35 +202,4 @@ func Only(sts []streams.Stream, f Filter) AnalyzedDocuments {
 	}
 
 	return ret
-}
-
-// A Filter removes predictions from consideration if the predicate returns false.
-type Filter func(streams.PredictionDocument) bool
-
-// Everything is a Filter that filters nothing out.
-func Everything(_ streams.PredictionDocument) bool { return true }
-
-// MatchingTag returns a Filter that returns true if the prediction’s tag matches the given tag.
-func MatchingTag(tag string) Filter {
-	return func(d streams.PredictionDocument) bool {
-		for _, predictionTag := range d.Tags {
-			if tag == predictionTag {
-				return true
-			}
-		}
-		return false
-	}
-}
-
-// MatchingKey returns a Filter that returns true if the prediction’s key matches the given key.
-func MatchingKey(key string) Filter {
-	return func(d streams.PredictionDocument) bool {
-		if d.Parent == nil {
-			if key == "" {
-				return true
-			}
-		}
-		return key == d.Parent.Metadata.Title+" "+d.Parent.Metadata.Scope
-
-	}
 }

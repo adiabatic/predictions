@@ -41,6 +41,15 @@ var publishMarkdownCommand = &cobra.Command{
 			os.Exit(1)
 		}
 
+		v := streams.Validator{}
+
+		for _, st := range sts {
+			errs := v.RunAll(st)
+			for _, err := range errs {
+				cmd.Println(err)
+			}
+		}
+
 		for _, st := range sts {
 			header := combineTitleAndScope(st.Metadata.Title, st.Metadata.Scope)
 
