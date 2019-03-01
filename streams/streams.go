@@ -18,6 +18,7 @@
 package streams
 
 import (
+	"fmt"
 	"io"
 	"os"
 
@@ -50,6 +51,10 @@ type MetadataDocument struct {
 	Scope string
 	Salt  string
 	Notes string
+
+	// These are here to detect when a user accidentally omits a metadata document in a stream.
+	MisplacedClaim      string `yaml:"claim"`
+	MisplacedConfidence string `yaml:"confidence"`
 }
 
 // A PredictionDocument contains a claim, the claim’s confidence, and so on.
@@ -108,6 +113,20 @@ func fromReaderWithFilename(r io.Reader, filename string) (Stream, error) {
 			return Stream{}, NeitherTitleNorScopeInMetadataBlock
 		}
 		return Stream{}, errors.WithMessage(err, "error while decoding metadata document")
+	}
+
+	filenamePrefix := ""
+	if filename != "" {
+		filenamePrefix = filename + ": "
+	}
+
+	if md.MisplacedClaim != "" {
+		return Stream{}, fmt.Errorf("%s[error.metadata.unexpected-claim]: claim of “%s” in first (metadata) document",
+			filenamePrefix, md.MisplacedClaim)
+	}
+
+	if md.MisplacedConfidence != "" {
+		return Stream{}, fmt.Errorf("%s[error.metadata.unexpected-confidence]: confidence of “%s” in first (metadata) document", filenamePrefix, md.MisplacedConfidence)
 	}
 
 	s.Metadata = md
