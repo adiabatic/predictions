@@ -61,7 +61,6 @@ func MarkdownFromStream(st streams.Stream) string {
 
 		buf.WriteString(MarkdownFromDocument(d))
 	}
-	buf.WriteString("\n")
 	return buf.String()
 }
 
@@ -69,13 +68,13 @@ func MarkdownFromStream(st streams.Stream) string {
 func MarkdownFromStreams(sts []streams.Stream, options ...Option) string {
 	var buf strings.Builder
 
-	o := markdownOptions{}
+	o := formattingOptions{}
 	for _, f := range options {
 		f(&o)
 	}
 
 	// TODO: first by title/scope, then by each individual tag…
-	buf.WriteString("# Everything\n")
+	buf.WriteString("# Everything\n\n")
 	for _, st := range sts {
 		buf.WriteString(MarkdownFromStream(st))
 	}
@@ -84,21 +83,15 @@ func MarkdownFromStreams(sts []streams.Stream, options ...Option) string {
 
 	keysUsed := streams.KeysUsed(sts)
 	if len(keysUsed) > 1 {
+		for _, key := range keysUsed {
+			fmt.Fprintf(&buf, "# %s\n\n", key)
 
+			for _, d := range streams.DocumentsMatching(sts, streams.MatchingKey(key)) {
+				buf.WriteString(MarkdownFromDocument(d))
+			}
+
+			buf.WriteString("\n")
+		}
 	}
 	return buf.String()
-}
-
-// Option is the type used for Markdown-formatting options.
-type Option func(o *markdownOptions)
-
-// ForPublic is an option that says whether to sanitize the output for public consumption.
-func ForPublic(b bool) Option {
-	return func(o *markdownOptions) {
-		o.forPublic = b
-	}
-}
-
-type markdownOptions struct {
-	forPublic bool
 }

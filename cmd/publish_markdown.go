@@ -50,15 +50,6 @@ var publishMarkdownCommand = &cobra.Command{
 			}
 		}
 
-		for _, st := range sts {
-			header := combineTitleAndScope(st.Metadata.Title, st.Metadata.Scope)
-
-			if header != "" {
-				fmt.Println("# " + header)
-				fmt.Println()
-			}
-
-			fmt.Println(formatters.MarkdownFromStream(st))
-		}
+		fmt.Print(formatters.MarkdownFromStreams(sts))
 	},
 }

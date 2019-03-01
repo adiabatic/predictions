@@ -45,3 +45,18 @@ func MatchingKey(key string) Filter {
 		return key == d.Parent.Metadata.Title+" "+d.Parent.Metadata.Scope
 	}
 }
+
+func DocumentsMatching(sts []Stream, f Filter) []PredictionDocument {
+	ret := make([]PredictionDocument, 0)
+	for _, st := range sts {
+		for _, p := range st.Predictions {
+			if !f(p) {
+				continue
+			}
+
+			ret = append(ret, p)
+		}
+	}
+
+	return ret
+}
