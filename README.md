@@ -9,7 +9,11 @@ Not sure what this whole ‘predictions’ thing is? Have a look at [Scott Alexa
 
 ## Usage
 
-`predictions [options] inputfile`
+To get a nicely-formatted HTML page analyzing your predictions, run `predictions publish html foo.yaml`.
+
+For more information on `predictions`’ commands and command-line flags, see [README.1.md][r1].
+
+[r1]: ./README.1.md
 
 `predictions` always outputs to standard output, with errors and warnings printed to standard error. To get the output into a file, redirect standard output to a file with `>`, as in `predictions 2019.yaml > 2019.markdown`.
 
