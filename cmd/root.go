@@ -30,7 +30,7 @@ func initConfig() {
 }
 
 var rootCommand = &cobra.Command{
-	Use:                   "predictions",
+	Use:                   "predictions COMMAND FILE …",
 	Short:                 "predictions — finds out how well-calibrated your predictions are",
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {

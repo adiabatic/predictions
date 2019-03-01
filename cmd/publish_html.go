@@ -40,7 +40,7 @@ type payload struct {
 }
 
 var publishHTMLCommand = &cobra.Command{
-	Use:                   "html",
+	Use:                   "html FILE …",
 	Aliases:               []string{"h"},
 	Short:                 "Formats your predictions as an HTML file",
 	DisableFlagsInUseLine: true,

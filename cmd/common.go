@@ -15,18 +15,34 @@
 package cmd
 
 import (
+	"fmt"
+	"os"
+
+	"github.com/adiabatic/predictions/formatters"
+	"github.com/adiabatic/predictions/streams"
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	rootCommand.AddCommand(analyzeCommand)
-}
+type runFunction func(*cobra.Command, []string)
 
-var analyzeCommand = &cobra.Command{
-	Use:                   "analyze FILE …",
-	Aliases:               []string{"a", "analyse"},
-	Short:                 "Runs analyses on your predictions",
-	DisableFlagsInUseLine: true,
-	Args:                  cobra.MinimumNArgs(1),
-	Run:                   printMarkdown(false),
+func printMarkdown(forPublic bool) runFunction {
+	return func(cmd *cobra.Command, args []string) {
+		sts, err := streams.StreamsFromFiles(args)
+		if err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+
+		v := streams.Validator{}
+
+		for _, st := range sts {
+			errs := v.RunAll(st)
+			for _, err := range errs {
+				cmd.Println(err)
+			}
+		}
+
+		fmt.Print(formatters.MarkdownFromStreams(sts, formatters.ForPublic(forPublic)))
+
+	}
 }

@@ -23,7 +23,7 @@ func init() {
 }
 
 var publishCommand = &cobra.Command{
-	Use:                   "publish",
+	Use:                   "publish [html | markdown] FILE …",
 	Aliases:               []string{"p"},
 	Short:                 "Formats predictions for publishing",
 	DisableFlagsInUseLine: true,
