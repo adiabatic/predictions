@@ -25,11 +25,13 @@ import (
 //
 // Formatting:
 //
-// - indeterminate results are italicized
+// - ongoing predictions are plain
 //
-// - things that happened are plain
+// - predictions that were called correctly are bold
 //
-// - things that didn't happen are struck through
+// - predictions that were mis-called are struck through
+//
+// - excluded-for-cause predictions are italicized
 //
 // Note that MarkdownFromDocument also uses HTML for the italics and the strikethrough. This may be a problem in some contexts that allow markdown but not HTML, like some forum software in some configurations.
 func MarkdownFromDocument(d streams.PredictionDocument) string {
