@@ -80,11 +80,3 @@ var analyzeCommand = &cobra.Command{
 		}
 	},
 }
-
-// Execute runs the root command.
-func Execute() {
-	if err := rootCommand.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
-		os.Exit(1)
-	}
-}
