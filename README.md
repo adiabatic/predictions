@@ -46,3 +46,9 @@ go get github.com/stretchr/testify
 go get -u github.com/spf13/cobra/cobra
 go get -u gopkg.in/russross/blackfriday.v2
 ```
+
+## Prior art
+
+[PredictionBook][] does this sort of thing as an open-source web service. If you’d rather have your predictions on someone else’s computer, check it out. I started on `predictions` and planned on turning it into a web service before someone told me about PredictionBook.
+
+[predictionbook]: https://predictionbook.com/
