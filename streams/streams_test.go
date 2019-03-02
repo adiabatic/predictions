@@ -253,3 +253,26 @@ func TestConfidenceNotAtAllANumber(t *testing.T) {
 	assert.EqualError(t, err,
 		"error reading the first prediction: yaml: unmarshal errors:\n  line 5: cannot unmarshal !!str `maybe` into float64")
 }
+
+const claimAndConfidenceInMetadata = `
+claim: it will rain tomorrow
+confidence: 50
+`
+
+func TestClaimInMetadata(t *testing.T) {
+	_, err := FromReader(strings.NewReader(claimAndConfidenceInMetadata))
+	assert.EqualError(t, err,
+		"[error.metadata.unexpected-claim]: claim of “it will rain tomorrow” in first (metadata) document")
+}
+
+const confidenceInMetadata = `
+confidence: 20
+---
+claim: I will dislike 85% dark chocolate`
+
+func TestConfidenceInMetadata(t *testing.T) {
+	_, err := FromReader(strings.NewReader(confidenceInMetadata))
+	assert.EqualError(t, err,
+		"[error.metadata.unexpected-confidence]: confidence of “20” in first (metadata) document")
+
+}
