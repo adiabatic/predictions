@@ -339,6 +339,10 @@
 <section>
     <canvas id="myChart"></canvas>
     <script>
+        Chart.defaults.global.defaultFontFamily = 'system-ui, sans-serif';
+        Chart.defaults.global.defaultFontSize = 16; // default: 12px
+        Chart.defaults.global.defaultFontColor = 'hsl(42, 0%, 90%)';
+
         const ctx = document.getElementById('myChart').getContext('2d');
         const data = {
             datasets: [{
@@ -352,6 +356,9 @@
                     x: .6,
                     y: .6,
                     // …
+                }, {
+                    x: .55,
+                    y: .55,
                 }]
             }, {
                 label: 'My predictions',
