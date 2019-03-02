@@ -17,6 +17,7 @@ package formatters
 import (
 	"html/template"
 	"io"
+	"io/ioutil"
 	"strings"
 
 	"github.com/adiabatic/predictions/analyze"
@@ -30,6 +31,8 @@ type payload struct {
 	PageTitle string
 	Streams   []streams.Stream
 	Analysis  analyze.Analysis
+
+	ChartJS template.JS
 }
 
 func documentResult(d streams.PredictionDocument) (class, message string) {
@@ -51,6 +54,13 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 	markdownifyNotes(sts)
 
 	var p payload
+
+	bs, err := ioutil.ReadFile("Chart.min.js")
+	if err != nil {
+		panic("could not load Chart.min.js")
+	}
+
+	p.ChartJS = template.JS(bs)
 
 	if len(sts) == 1 {
 		p.PageTitle = combineTitleAndScope(sts[0].Metadata.Title, sts[0].Metadata.Scope)
