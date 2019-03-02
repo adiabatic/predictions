@@ -45,7 +45,7 @@ var publishHTMLCommand = &cobra.Command{
 	Short:                 "Formats your predictions as an HTML file",
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		sts, err := streams.StreamsFromFiles(args)
+		sts, err := streams.FromFiles(args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)

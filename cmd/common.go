@@ -27,7 +27,7 @@ type runFunction func(*cobra.Command, []string)
 
 func printMarkdown(forPublic bool) runFunction {
 	return func(cmd *cobra.Command, args []string) {
-		sts, err := streams.StreamsFromFiles(args)
+		sts, err := streams.FromFiles(args)
 		if err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)

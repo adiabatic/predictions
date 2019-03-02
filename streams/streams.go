@@ -162,8 +162,8 @@ func FromReader(r io.Reader) (Stream, error) {
 	return fromReaderWithFilename(r, "")
 }
 
-// StreamsFromFiles generates a slice of Stream from the filenames specified.
-func StreamsFromFiles(filenames []string) ([]Stream, error) {
+// FromFiles generates a slice of Stream from the filenames specified.
+func FromFiles(filenames []string) ([]Stream, error) {
 	streams := make([]Stream, 0, 1)
 
 	for _, fn := range filenames {
