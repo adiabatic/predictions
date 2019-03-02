@@ -16,11 +16,9 @@ package cmd
 
 import (
 	"fmt"
-	"html/template"
 	"os"
-	"strings"
 
-	"gopkg.in/russross/blackfriday.v2"
+	"github.com/adiabatic/predictions/formatters"
 
 	"github.com/adiabatic/predictions/analyze"
 	"github.com/adiabatic/predictions/streams"
@@ -60,59 +58,10 @@ var publishHTMLCommand = &cobra.Command{
 			}
 		}
 
-		markdownifyNotes(sts)
-
-		var p payload
-
-		if len(sts) == 1 {
-			p.PageTitle = combineTitleAndScope(sts[0].Metadata.Title, sts[0].Metadata.Scope)
-		}
-
-		p.Streams = sts
-
-		funcs := template.FuncMap{
-			// a three-valued bool should be a “trool”, right?
-			"troolToString": func(v *bool) string {
-				switch {
-				case v == nil:
-					return "null"
-				case *v == true:
-					return "true"
-				case *v == false:
-					return "false"
-				}
-
-				return "unexpected"
-			},
-			"commaSeparate": func(ss []string) string {
-				return strings.Join(ss, ", ")
-			},
-			"safeHTML": func(s string) template.HTML {
-				return template.HTML(s)
-			},
-			"refAU": func(au analyze.AnalysisUnit) *analyze.AnalysisUnit {
-				return &au
-			},
-		}
-
-		p.Analysis = analyze.Analyze(sts)
-
-		t := template.Must(template.New("template").Funcs(funcs).ParseFiles("template.html"))
-		err = t.Execute(os.Stdout, p)
+		err = formatters.HTMLFromStreams(os.Stdout, sts)
 		if err != nil {
 			cmd.Println("error when executing template: ", err)
 			os.Exit(2)
 		}
-
 	},
-}
-
-func markdownifyNotes(sts []streams.Stream) {
-	for _, st := range sts {
-		for i, d := range st.Predictions {
-			if d.Notes != "" {
-				st.Predictions[i].Notes = string(blackfriday.Run([]byte(d.Notes)))
-			}
-		}
-	}
 }

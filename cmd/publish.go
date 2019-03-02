@@ -28,16 +28,3 @@ var publishCommand = &cobra.Command{
 	Short:                 "Formats predictions for publishing",
 	DisableFlagsInUseLine: true,
 }
-
-func combineTitleAndScope(title, scope string) string {
-	r := ""
-	if title != "" {
-		r += title
-		if scope != "" {
-			r += ": " + scope
-		}
-	} else {
-		r += scope
-	}
-	return r
-}

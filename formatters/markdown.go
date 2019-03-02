@@ -38,15 +38,17 @@ func MarkdownFromDocument(d streams.PredictionDocument) string {
 	meat := fmt.Sprintf("%v: %v%%", d.Claim, *(d.Confidence))
 	withToppings := ""
 
-	switch {
-	case d.Happened == nil && d.CauseForExclusion != "":
+	switch Evaluate(d) {
+	case ExcludedForCause:
 		withToppings = fmt.Sprintf("- <i>%v</i>", meat)
-	case d.Happened == nil:
+	case Ongoing:
 		withToppings = fmt.Sprintf("- %v", meat)
-	case *d.Happened == true:
+	case Called:
 		withToppings = fmt.Sprintf("- <b>%v</b>", meat)
-	case *d.Happened == false:
+	case Missed:
 		withToppings = fmt.Sprintf("- <s>%v</s>", meat)
+	default:
+		panic(fmt.Sprintf("logic error in MarkdownFromDocument given document: %#v", d))
 	}
 
 	return withToppings + "\n"
