@@ -241,7 +241,7 @@ func TestConfidenceWithPercentageSigns(t *testing.T) {
 		"error reading the first prediction: yaml: unmarshal errors:\n  line 5: cannot unmarshal !!str `80%` into float64")
 }
 
-const confidenceNotAtAllANumber = `
+const confidenceOfMaybe = `
 title: I predict my drinking habits
 ---
 claim: I will order three beers at a bar
@@ -249,7 +249,7 @@ confidence: maybe
 `
 
 func TestConfidenceNotAtAllANumber(t *testing.T) {
-	_, err := FromReader(strings.NewReader(confidenceNotAtAllANumber))
+	_, err := FromReader(strings.NewReader(confidenceOfMaybe))
 	assert.EqualError(t, err,
 		"error reading the first prediction: yaml: unmarshal errors:\n  line 5: cannot unmarshal !!str `maybe` into float64")
 }
