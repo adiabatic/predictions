@@ -13,13 +13,13 @@ To get a nicely-formatted HTML page analyzing your predictions, run `predictions
 
 For more information on `predictions`’ output types, commands, and command-line flags, see [README.1.md][r1].
 
-[r1]: ./README.1.md
+[r1]: ./doc/README.1.md
 
 ## The YAML file format
 
 In order to use `predictions` you’ll need to write one or more YAML files in a text editor. See [README.5.md][r5] to learn what `predictions` expects in those files.
 
-[r5]: ./README.5.md
+[r5]: ./doc/README.5.md
 
 ## Salt-and-hash rationale
 
