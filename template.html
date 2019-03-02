@@ -340,23 +340,38 @@
     <canvas id="myChart"></canvas>
     <script>
         const ctx = document.getElementById('myChart').getContext('2d');
-        const chart = new Chart(ctx, {
-            // The type of chart we want to create
-            type: 'line',
-
-            // The data for our dataset
-            data: {
-                labels: ["January", "February", "March", "April", "May", "June", "July"],
-                datasets: [{
-                    label: "My First dataset",
-                    backgroundColor: 'rgb(255, 99, 132)',
-                    borderColor: 'rgb(255, 99, 132)',
-                    data: [0, 10, 5, 2, 20, 30, 45],
+        const data = {
+            datasets: [{
+                label: 'Perfect-calibration dataset',
+                borderColor: 'hsl(0, 50%, 60%)',
+                backgroundColor: 'hsla(0, 50%, 60%, .2)',
+                data: [{
+                    x: .5,
+                    y: .5,
+                }, {
+                    x: .6,
+                    y: .6,
+                    // …
                 }]
-            },
-
-            // Configuration options go here
-            options: {}
+            }, {
+                label: 'My predictions',
+                borderColor: 'hsl(270, 50%, 60%)',
+                backgroundColor: 'hsla(270, 50%, 60%, .2)',
+                data: [{
+                    x: .6,
+                    y: .45,
+                }]
+            }]
+        };
+        
+        const c = Chart.Scatter(ctx, {
+            data: data,
+            options: {
+                title: {
+                    display: true,
+                    text: 'A Chart.js Scatter Chart'
+                },
+            }
         });
     </script>
 </section>
