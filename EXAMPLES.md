@@ -1,5 +1,7 @@
 # Examples
 
+<!-- markdownlint-disable MD033 -->
+
 Sometimes it’s a struggle to think of things to predict. Here are a few example claims to inspire you. Some of these may bore you silly, but that’s OK: this is a laundry list.
 
 If not otherwise specified, the assumed scope for all these claims is “in the current year”.
@@ -30,7 +32,7 @@ If not otherwise specified, the assumed scope for all these claims is “in the 
 - Project X will ship
 - I will get a new job
 - I will get a new job in a new industry
-- I will get a new job, and the pay + benefits will be X% higher than my current compensation
+- I will get a new job, and the pay + benefits will be <var>x</var>% higher than my current compensation
 
 ## Other people
 

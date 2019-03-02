@@ -1,10 +1,12 @@
-# `predictions`’ command-line arguments
+# `predictions`’ commands and subcommands
 
-## `analyze` «list of files»
+<!-- markdownlint-disable MD033 -->
+
+## `analyze` <var>file</var> <var>...</var>
 
 Analyzes your predictions in one or more files and outputs the analysis to standard output.
 
-## `markdownify` «list of files»
+## `markdownify` <var>file</var> <var>...</var>
 
 Turns your predictions into a snippet of Markdown suitable for posting on your own blog.
 
