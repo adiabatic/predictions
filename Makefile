@@ -5,3 +5,4 @@ check-copyright-headers:
 
 clean:
 	rm -rf dist
+	rm predictions
