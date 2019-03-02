@@ -32,6 +32,21 @@ type payload struct {
 	Analysis  analyze.Analysis
 }
 
+func documentResult(d streams.PredictionDocument) (class, message string) {
+	switch Evaluate(d) {
+	case ExcludedForCause:
+		return "excluded", "excluded"
+	case Ongoing:
+		return "ongoing", "ongoing"
+	case Called:
+		return "true", "called it"
+	case Missed:
+		return "false", "missed it"
+	}
+	return "logic-error", "logic error"
+}
+
+// HTMLFromStreams generates HTML output of streams and writes it to w.
 func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 	markdownifyNotes(sts)
 
@@ -44,18 +59,13 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 	p.Streams = sts
 
 	funcs := template.FuncMap{
-		// a three-valued bool should be a “trool”, right?
-		"troolToString": func(v *bool) string {
-			switch {
-			case v == nil:
-				return "null"
-			case *v == true:
-				return "true"
-			case *v == false:
-				return "false"
-			}
-
-			return "unexpected"
+		"resultClass": func(d streams.PredictionDocument) string {
+			class, _ := documentResult(d)
+			return class
+		},
+		"resultMessage": func(d streams.PredictionDocument) string {
+			_, message := documentResult(d)
+			return message
 		},
 		"commaSeparate": func(ss []string) string {
 			return strings.Join(ss, ", ")

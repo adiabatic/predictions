@@ -31,7 +31,7 @@ const (
 // Evaluate returns an int describing whether the prediction is excluded, ongoing, called, or missed.
 func Evaluate(d streams.PredictionDocument) int {
 	switch {
-	case d.Happened == nil && d.CauseForExclusion != "":
+	case d.Happened == nil && d.CauseForExclusion != "": // must come before d.Happened checks
 		return ExcludedForCause
 	case d.Happened == nil:
 		return Ongoing

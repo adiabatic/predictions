@@ -16,6 +16,8 @@ This describes `predictions`’ file format. `predictions` uses [YAML][], so thi
 - Each prediction has both a claim and a confidence unless the author forgot one (or both).
 - Any given prediction may have things other than a claim and a confidence level in it.
 
+Outside of a prediction, a prediction has a result (called it, missed it, ongoing, or excluded).
+
 ## Example
 
 ```yaml

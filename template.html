@@ -312,22 +312,7 @@
 <section class='document'>
     <div class='claim center-child-vertically'><div>{{ .Claim }}</div></div>
     <div class='percent center-child'><div>{{ .Confidence }}%</div></div>
-    {{ $class := "" }}
-    {{ $message := "" }}
-    {{- if eq (troolToString .Happened) "true" -}}
-        {{ $class = "true" }}
-        {{ $message = "called it" }}
-    {{- else if eq (troolToString .Happened) "false" -}}
-        {{ $class = "false" }}
-        {{ $message = "missed it" }}
-    {{- else if ne .CauseForExclusion "" -}}
-        {{ $class = "excluded" }}
-        {{ $message = "excluded" }}
-    {{- else -}}
-        {{ $class = "ongoing" }}
-        {{ $message = "ongoing" }}
-    {{- end -}}
-    <div class='result {{ $class }} center-child'><div>{{ $message }}</div></div>  
+    <div class='result {{ . | resultClass }} center-child'><div>{{ . | resultMessage }}</div></div>  
     <div class='metadata'>
         {{/* TODO: add stuff for putting scopes in here */}}
         {{ with .Tags }}
