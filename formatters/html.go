@@ -15,6 +15,7 @@
 package formatters
 
 import (
+	"fmt"
 	"html/template"
 	"io"
 	"io/ioutil"
@@ -43,10 +44,14 @@ func documentResult(d streams.PredictionDocument) (class, message string) {
 		return "ongoing", "ongoing"
 	case Resolved:
 		return "resolved", "resolved"
-	case Called:
-		return "true", "called it"
-	case Missed:
-		return "false", "missed it"
+	case CalledTruePositive:
+		return "true-positive", "called it"
+	case CalledTrueNegative:
+		return "true-negative", "called it"
+	case MissedFalsePositive:
+		return "false-positive", "missed it"
+	case MissedFalseNegative:
+		return "false-negative", "missed it"
 	}
 	return "logic-error", "logic error"
 }
@@ -71,6 +76,31 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 	p.Streams = sts
 
 	funcs := template.FuncMap{
+		"explainResult": func(d streams.PredictionDocument) string {
+
+			because := ""
+			switch Evaluate(d) {
+			case ExcludedForCause:
+				because = "this prediction was deliberately excluded from consideration"
+			case Ongoing:
+				because = "it’s too soon to say whether this has happened or not"
+			case Resolved:
+				because = "whatever was predicted has come to pass, but if your prediction was that it had a 50/50 chance of happening, nobody can really say if your prediction was correct"
+			case CalledTruePositive:
+				because = "you said this would happen, and it did"
+			case CalledTrueNegative:
+				because = "you said this wouldn’t happen, and it didn’t"
+			case MissedFalsePositive:
+				because = "you said this would happen, but it didn’t"
+			case MissedFalseNegative:
+				because = "you said this wouldn’t happen, but it did anyway"
+			}
+
+			_, message := documentResult(d)
+			ret := fmt.Sprintf("“%s” is here because %s.", message, because)
+
+			return ret
+		},
 		"resultClass": func(d streams.PredictionDocument) string {
 			class, _ := documentResult(d)
 			return class

@@ -43,9 +43,9 @@ func MarkdownFromDocument(d streams.PredictionDocument) string {
 		withToppings = fmt.Sprintf("- <i>%v</i>", meat)
 	case Ongoing:
 		withToppings = fmt.Sprintf("- %v", meat)
-	case Called:
+	case CalledTruePositive, CalledTrueNegative:
 		withToppings = fmt.Sprintf("- <b>%v</b>", meat)
-	case Missed:
+	case MissedFalsePositive, MissedFalseNegative:
 		withToppings = fmt.Sprintf("- <s>%v</s>", meat)
 	case Resolved:
 		withToppings = fmt.Sprintf("- <b><s>%v</s></b>", meat) // Ugly and confusing but I don’t see a better way at the moment

@@ -125,12 +125,14 @@
             padding: var(--padding-text-inside-document);
         }
 
-        .result.true {
+        .result.true-positive,
+        .result.true-negative {
 			background: var(--color-background-called-it);
 			color: var(--color-text-called-it);
         }
 
-        .result.false {
+        .result.false-positive,
+        .result.false-negative {
             background: var(--color-background-missed-it);
             color: var(--color-text-missed-it);
         }
@@ -316,7 +318,7 @@
 <section class='document'>
     <div class='claim center-child-vertically'><div>{{ .Claim }}</div></div>
     <div class='percent center-child'><div>{{ .Confidence }}%</div></div>
-    <div class='result {{ . | resultClass }} center-child'><div>{{ . | resultMessage }}</div></div>  
+    <div class='result {{ . | resultClass }} center-child' title='{{ . | explainResult }}'><div>{{ . | resultMessage }}</div></div>  
     <div class='metadata'>
         {{/* TODO: add stuff for putting scopes in here */}}
         {{ with .Tags }}
