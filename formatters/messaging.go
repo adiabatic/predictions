@@ -18,12 +18,14 @@ import (
 	"fmt"
 
 	"github.com/adiabatic/predictions/streams"
+	"github.com/davecgh/go-spew/spew"
 )
 
 // Constants for describing the various states of a prediction.
 const (
 	ExcludedForCause = iota
 	Ongoing
+	Resolved
 	Called
 	Missed
 )
@@ -35,6 +37,9 @@ func Evaluate(d streams.PredictionDocument) int {
 		return ExcludedForCause
 	case d.Happened == nil:
 		return Ongoing
+	case (*d.Happened == true || *d.Happened == false) && d.Confidence != nil && *d.Confidence == 50:
+		// Yes, everything in parentheses above is redundant but it communicates intent
+		return Resolved
 	case (*d.Happened == true && d.Confidence != nil && *d.Confidence > 50) ||
 		(*d.Happened == false && d.Confidence != nil && *d.Confidence < 50):
 		return Called
@@ -42,6 +47,11 @@ func Evaluate(d streams.PredictionDocument) int {
 		(*d.Happened == true && d.Confidence != nil && *d.Confidence < 50):
 		return Missed
 	default:
-		panic(fmt.Sprintf("logic error in formatters.Evaluate given document: %#v", d))
+		// Reduce noise in debug output
+		d.Parent = nil
+		scs := spew.NewDefaultConfig()
+		scs.DisablePointerAddresses = true
+
+		panic(fmt.Sprintf("logic error in formatters.Evaluate given document: %s", scs.Sdump(d)))
 	}
 }

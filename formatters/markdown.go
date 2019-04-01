@@ -47,6 +47,8 @@ func MarkdownFromDocument(d streams.PredictionDocument) string {
 		withToppings = fmt.Sprintf("- <b>%v</b>", meat)
 	case Missed:
 		withToppings = fmt.Sprintf("- <s>%v</s>", meat)
+	case Resolved:
+		withToppings = fmt.Sprintf("- <b><s>%v</s></b>", meat) // Ugly and confusing but I don’t see a better way at the moment
 	default:
 		panic(fmt.Sprintf("logic error in MarkdownFromDocument given document: %#v", d))
 	}
