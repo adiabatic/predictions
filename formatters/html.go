@@ -41,6 +41,8 @@ func documentResult(d streams.PredictionDocument) (class, message string) {
 		return "excluded", "excluded"
 	case Ongoing:
 		return "ongoing", "ongoing"
+	case Resolved:
+		return "resolved", "resolved"
 	case Called:
 		return "true", "called it"
 	case Missed:
