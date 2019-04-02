@@ -7,37 +7,91 @@
     <style>
 		:root {
 			/* using the semi-magic value "42" for colors intended to be pure white/gray/black */
-			--color-font-primary: hsl(42, 0%, 95%);
-			--color-background-primary: hsl(42, 0%, 10%);
+			--color-light-1: hsl(42, 0%, 95%);
+			--color-light-2: hsl(42, 0%, 90%);
 
-			--color-font-secondary: var(--color-font-primary);
-			--color-background-secondary: hsl(42, 0%, 20%);
+            --color-dark-2: hsl(42, 0%, 20%);
+			--color-dark-1: hsl(42, 0%, 10%);
 
-			--color-font-tertiary: hsl(42, 0%, 90%);
-			--color-background-tertiary: var(--color-background-secondary);
-
-            --color-link: hsl(180, 50%, 75%);
+            --color-link:    hsl(180, 50%, 75%);
             --color-visited: hsl(270, 50%, 75%);
-
 
 			/* calls */
 
-			--color-font-called-it: hsl(120, 50%, 90%);
-			--color-background-called-it: hsl(120, 50%, 33%);
+            --color-green-light: hsl(120, 50%, 90%);
+            --color-green-dark:  hsl(120, 50%, 33%);
 
-			--color-font-missed-it: hsl(0, 50%, 90%);
-			--color-background-missed-it: hsl(0, 50%, 33%);
+			--color-red-light: hsl(0, 50%, 90%);
+			--color-red-dark:  hsl(0, 50%, 33%);
 
-			--color-font-ongoing: inherit;
+            /* links */
+
+            --color-blue-light:   hsl(180, 50%, 75%);
+            --color-purple-light: hsl(270, 50%, 75%);
+
+            --color-blue-dark:    hsl(180, 50%, 25%);
+            --color-purple-dark:  hsl(270, 50%, 25%);
+
+		}
+
+        /* universal colors and things */
+        :root {
+			--color-font-ongoing:       inherit;
 			--color-background-ongoing: inherit;
 
-			--color-font-excluded: black;
+			--color-font-excluded:       black;
 			--color-background-excluded: white;
 
             /* spacing */
 
             --padding-text-inside-document: .5ch;
-		}
+        }
+
+        :root {
+            --color-font-primary:       var(--color-dark-1);
+            --color-background-primary: var(--color-light-1);
+
+            --color-font-secondary:       var(--color-font-primary);
+            --color-background-secondary: var(--color-light-2);
+
+            --color-font-tertiary:       var(--color-dark-2);
+            --color-background-tertiary: var(--color-background-secondary);
+
+            --color-link:    var(--color-blue-dark);
+            --color-visited: var(--color-purple-dark);
+
+            /* calls */
+
+            --color-font-called-it:       var(--color-green-dark);
+            --color-background-called-it: var(--color-green-light);
+
+            --color-font-missed-it:       var(--color-red-dark);
+            --color-background-missed-it: var(--color-red-light);
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --color-font-primary:       var(--color-light-1);
+                --color-background-primary: var(--color-dark-1);
+
+                --color-font-secondary:       var(--color-font-primary);
+                --color-background-secondary: var(--color-dark-2);
+
+                --color-font-tertiary:       var(--color-light-2);
+                --color-background-tertiary: var(--color-background-secondary);
+
+                --color-link:    var(--color-blue-light);
+                --color-visited: var(--color-purple-light);
+
+                /* calls */
+
+                --color-font-called-it:       var(--color-green-light);
+                --color-background-called-it: var(--color-green-dark);
+
+                --color-font-missed-it:       var(--color-red-light);
+                --color-background-missed-it: var(--color-red-dark);
+            }
+        }
         
         html {
             font-family: system-ui, sans-serif;
