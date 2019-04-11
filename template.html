@@ -312,6 +312,9 @@
     </style>
 </head>
 <body>
+    <script>{{ .ChartJS }}</script>
+    {{ template "charts" . }}
+
     {{ with .Analysis.Everything }}
         {{ template "analyzeddocuments" . }}
     {{ end }}
@@ -327,9 +330,6 @@
             {{ template "analyzeddocuments" . }}
         {{ end }}
     {{ end }}
-
-    <script>{{ .ChartJS }}</script>
-    {{ template "charts" . }}
 
 </body>
 </html>
@@ -399,12 +399,22 @@
         Chart.defaults.global.defaultFontSize = 16; // default: 12px
         Chart.defaults.global.defaultFontColor = 'hsl(42, 0%, 90%)';
 
+        // changing colors based on media query:
+        //
+        // https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Testing_media_queries
+        //
+        // https://www.chartjs.org/docs/latest/general/options.html
+        // 
+
+
         const ctx = document.getElementById('myChart').getContext('2d');
         const data = {
             datasets: [{
                 label: 'Perfect-calibration dataset',
-                borderColor: 'hsl(0, 50%, 60%)',
-                backgroundColor: 'hsla(0, 50%, 60%, .2)',
+
+                borderColor: 'hsl(270, 50%, 60%)',
+                backgroundColor: 'hsla(270, 50%, 60%, .2)',
+                fill: false,
                 data: [{
                     x: .5,
                     y: .5,
@@ -418,8 +428,9 @@
                 }]
             }, {
                 label: 'My predictions',
-                borderColor: 'hsl(270, 50%, 60%)',
-                backgroundColor: 'hsla(270, 50%, 60%, .2)',
+                borderColor: 'hsl(0, 50%, 60%)',
+                backgroundColor: 'hsla(0, 50%, 60%, .2)',
+                type: 'scatter',
                 data: [{
                     x: .6,
                     y: .45,
@@ -427,14 +438,31 @@
             }]
         };
         
-        const c = Chart.Scatter(ctx, {
-            data: data,
-            options: {
-                title: {
-                    display: true,
-                    text: 'A Chart.js Scatter Chart'
-                },
+        const options = {
+            title: {
+                display: true,
+                text: 'A Chart.js Scatter Chart'
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        max: 1
+                    }
+                }],
+                xAxes: [{
+                    ticks: {
+                        min: 0,
+                        max: 1
+                    }
+                }]
             }
+        }
+
+        const c = new Chart(ctx, {
+            type: 'line',
+            data: data,
+            options: options
         });
     </script>
 </section>
