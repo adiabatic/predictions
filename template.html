@@ -312,9 +312,6 @@
     </style>
 </head>
 <body>
-    <script>{{ .ChartJS }}</script>
-    {{ template "charts" . }}
-
     {{ with .Analysis.Everything }}
         {{ template "analyzeddocuments" . }}
     {{ end }}
@@ -330,7 +327,6 @@
             {{ template "analyzeddocuments" . }}
         {{ end }}
     {{ end }}
-
 </body>
 </html>
 {{- end }}
