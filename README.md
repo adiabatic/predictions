@@ -45,6 +45,7 @@ go get github.com/davecgh/go-spew/spew
 go get github.com/stretchr/testify
 go get -u github.com/spf13/cobra/cobra
 go get -u gopkg.in/russross/blackfriday.v2
+go get github.com/xtgo/set
 ```
 
 ## Prior art

@@ -19,6 +19,7 @@ import (
 	"html/template"
 	"io"
 	"io/ioutil"
+	"os"
 	"strings"
 
 	"github.com/adiabatic/predictions/analyze"
@@ -33,7 +34,23 @@ type payload struct {
 	Streams   []streams.Stream
 	Analysis  analyze.Analysis
 
-	ChartJS template.JS
+	ChartJS     template.JS
+	PerfectData []Point
+	GuessData   []Point
+}
+
+// A Point struct contains an x and y point. Used for Chart.js.
+type Point struct {
+	X float64 `json:"x"`
+	Y float64 `json:"y"`
+}
+
+// MarshalJSON suppresses excess precision in float64’s default marshaling behavior.
+//
+// Do you want to see tooltips for points on a chart that say (0.7000000000000001, 0.7000000000000001)? Me neither.
+func (p Point) MarshalJSON() ([]byte, error) {
+	s := fmt.Sprintf(`{"x":%.2f, "y":%.2f}`, p.X, p.Y)
+	return []byte(s), nil
 }
 
 func documentResult(d streams.PredictionDocument) (class, message string) {
@@ -122,6 +139,9 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 
 	p.Analysis = analyze.Analyze(sts)
 
+	addPerfectData(&p)
+	addGuessData(&p)
+
 	t := template.Must(template.New("template").Funcs(funcs).ParseFiles("template.html"))
 	return t.Execute(w, p)
 }
@@ -147,4 +167,38 @@ func combineTitleAndScope(title, scope string) string {
 		r += scope
 	}
 	return r
+}
+
+func addPerfectData(pp *payload) {
+	numbers := make([]float64, 0)
+
+	var num float64
+	for ; num <= 1.03; num += 0.05 {
+		numbers = append(numbers, num)
+	}
+	numbers[0] = 0.01              // 0 is a bad idea
+	numbers[len(numbers)-1] = 0.99 // 1 is a bad idea
+
+	for _, n := range numbers {
+		p := Point{n, n}
+		pp.PerfectData = append(pp.PerfectData, p)
+	}
+}
+
+func addGuessData(pp *payload) {
+	confidenceGroupings := pp.Analysis.EverythingByConfidence
+	for _, grouping := range confidenceGroupings {
+		conf := grouping.Confidence()
+		if conf == nil {
+			fmt.Fprintln(os.Stderr, "Odd. I didn’t expect a nil confidence in addGuessData().")
+			continue
+		}
+
+		p := Point{
+			*conf / 100,
+			grouping.AnalysisUnit.OfTotalCalled() / 100,
+		}
+
+		pp.GuessData = append(pp.GuessData, p)
+	}
 }

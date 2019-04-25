@@ -33,6 +33,12 @@ type Analysis struct {
 	EverythingByConfidence []AnalyzedDocuments
 }
 
+// An AnalyzedDocuments contains both an AnalysisUnit and a slice of PredictionDocument.
+type AnalyzedDocuments struct {
+	AnalysisUnit AnalysisUnit
+	Documents    []streams.PredictionDocument
+}
+
 // AnalysisUnit provides information on a subset of an Analysis.
 type AnalysisUnit struct {
 	Title              string
@@ -45,12 +51,6 @@ type AnalysisUnit struct {
 	Excluded int //   has “cause for exclusion” key with value
 
 	Unscorable int // lacks claim, lacks confidence, or both
-}
-
-// An AnalyzedDocuments contains both an AnalysisUnit and a slice of PredictionDocument.
-type AnalyzedDocuments struct {
-	AnalysisUnit AnalysisUnit
-	Documents    []streams.PredictionDocument
 }
 
 // Total returns the sum of the scored items, the unscored items, and the unscorable items.
@@ -135,6 +135,26 @@ func (au *AnalysisUnit) BrierScore() float64 {
 	return sum / float64(len(au.SquaredDifferences))
 }
 
+// Confidence returns the confidence level of an AnalyzedDocuments if they all have the same confidence level, or nil otherwise.
+func (ads *AnalyzedDocuments) Confidence() *float64 {
+	const ε = 0.0001
+	var ret *float64
+	for _, d := range ads.Documents {
+		if d.Confidence != nil {
+			if ret == nil {
+				ret = d.Confidence
+			} else {
+				if math.Abs(*ret-*d.Confidence) > ε {
+					// preexisting saved value is too different from current value, so this bunch must be confidence-ly heterogenous
+					return nil
+				}
+			}
+
+		}
+	}
+	return ret
+}
+
 // Analyze calculates Brier scores for the given streams.
 func Analyze(sts []streams.Stream) Analysis {
 	ret := Analysis{}
@@ -155,6 +175,13 @@ func Analyze(sts []streams.Stream) Analysis {
 		ds := Only(sts, streams.MatchingKey(key))
 		ds.AnalysisUnit.Title = key
 		ret.EverythingByKey = append(ret.EverythingByKey, ds)
+	}
+
+	confidencesUsed := streams.ConfidencesUsed(sts)
+	for _, confidence := range confidencesUsed {
+		ds := Only(sts, streams.MatchingConfidence(confidence))
+		ds.AnalysisUnit.Title = fmt.Sprintf("At the %.0f%% confidence level", confidence)
+		ret.EverythingByConfidence = append(ret.EverythingByConfidence, ds)
 	}
 
 	return ret

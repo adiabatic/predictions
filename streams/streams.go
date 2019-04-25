@@ -23,6 +23,7 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
+	"github.com/xtgo/set"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -322,4 +323,17 @@ func KeysUsed(sts []Stream) []string {
 	}
 	return deduplicateStrings(ret)
 
+}
+
+// ConfidencesUsed returns a list of all confidence intervals used in the given Streams.
+func ConfidencesUsed(sts []Stream) []float64 {
+	ret := make([]float64, 0)
+	for _, s := range sts {
+		for _, pred := range s.Predictions {
+			if !pred.ShouldExclude() {
+				ret = append(ret, *pred.Confidence)
+			}
+		}
+	}
+	return set.Float64s(ret)
 }

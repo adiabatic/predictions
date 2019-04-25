@@ -14,6 +14,8 @@
 
 package streams
 
+import "math"
+
 // A Filter removes predictions from consideration if the predicate returns false.
 type Filter func(PredictionDocument) bool
 
@@ -43,6 +45,18 @@ func MatchingKey(key string) Filter {
 
 		// this combining equality check exists elsewhere in the codebase. I should have a common function for both so they don’t get out of sync.
 		return key == d.Parent.Metadata.Title+" "+d.Parent.Metadata.Scope
+	}
+}
+
+// MatchingConfidence returns a Filter that returns true if the prediction’s confidence level matches (to within a fudge factor) the given confidence level.
+func MatchingConfidence(conf float64) Filter {
+	const ε = 0.0001
+	return func(d PredictionDocument) bool {
+		if d.Confidence != nil && math.Abs(*d.Confidence-conf) < ε {
+			return true
+		}
+
+		return false
 	}
 }
 

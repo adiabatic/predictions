@@ -312,6 +312,9 @@
     </style>
 </head>
 <body>
+    <script>{{ .ChartJS }}</script>
+    {{ template "charts" . }}
+
     {{ with .Analysis.Everything }}
         {{ template "analyzeddocuments" . }}
     {{ end }}
@@ -327,6 +330,13 @@
             {{ template "analyzeddocuments" . }}
         {{ end }}
     {{ end }}
+
+    {{ if gt (len .Analysis.EverythingByConfidence) 1 }}
+        {{ range .Analysis.EverythingByConfidence }}
+            {{ template "analyzeddocuments" . }}
+        {{ end }}
+    {{ end }}
+
 </body>
 </html>
 {{- end }}
@@ -389,77 +399,129 @@
 
 {{ define "charts" }}
 <section>
-    <canvas id="myChart"></canvas>
-    <script>
-        Chart.defaults.global.defaultFontFamily = 'system-ui, sans-serif';
-        Chart.defaults.global.defaultFontSize = 16; // default: 12px
-        Chart.defaults.global.defaultFontColor = 'hsl(42, 0%, 90%)';
+    <figure>
+        <canvas id="myChart"></canvas>
+        <script>
+            // changing colors based on media query:
+            //
+            // https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Testing_media_queries
+            //
+            // https://www.chartjs.org/docs/latest/general/options.html
+            // 
 
-        // changing colors based on media query:
-        //
-        // https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries/Testing_media_queries
-        //
-        // https://www.chartjs.org/docs/latest/general/options.html
-        // 
+            const white = 'hsl(42, 0%, 90%)';
+            const black = 'hsl(42, 0%, 10%)';
 
+            const perfectPrimaryLight = 'hsl(270, 50%, 40%)';
+            const perfectSecondaryLight = 'hsla(270, 50%, 40%, .2)';
 
-        const ctx = document.getElementById('myChart').getContext('2d');
-        const data = {
-            datasets: [{
-                label: 'Perfect-calibration dataset',
+            const myPrimaryLight = 'hsl(0, 50%, 40%)';
+            const mySecondaryLight = 'hsla(0, 50%, 40%, .2)';
+            // ---
+            const perfectPrimaryDark = 'hsl(270, 50%, 60%)';
+            const perfectSecondaryDark = 'hsla(270, 50%, 60%, .2)';
 
-                borderColor: 'hsl(270, 50%, 60%)',
-                backgroundColor: 'hsla(270, 50%, 60%, .2)',
-                fill: false,
-                data: [{
-                    x: .5,
-                    y: .5,
-                }, {
-                    x: .6,
-                    y: .6,
-                    // …
-                }, {
-                    x: .55,
-                    y: .55,
-                }]
-            }, {
-                label: 'My predictions',
-                borderColor: 'hsl(0, 50%, 60%)',
-                backgroundColor: 'hsla(0, 50%, 60%, .2)',
-                type: 'scatter',
-                data: [{
-                    x: .6,
-                    y: .45,
-                }]
-            }]
-        };
-        
-        const options = {
-            title: {
-                display: true,
-                text: 'A Chart.js Scatter Chart'
-            },
-            scales: {
-                yAxes: [{
-                    ticks: {
-                        min: 0,
-                        max: 1
-                    }
-                }],
-                xAxes: [{
-                    ticks: {
-                        min: 0,
-                        max: 1
-                    }
-                }]
+            const myPrimaryDark = 'hsl(0, 50%, 60%)';
+            const mySecondaryDark = 'hsla(0, 50%, 60%, .2)';
+
+            Chart.defaults.global.defaultFontFamily = 'system-ui, sans-serif';
+            Chart.defaults.global.defaultFontSize = 16; // default: 12px
+            Chart.defaults.global.defaultFontColor = black;
+
+            function updateToLight(chart) {
+                console.log("Updating to light…")
+                chart.options.legend.labels.fontColor = black;
+
+                console.log("before changing axes to black (for a light background):", chart.options.scales.yAxes)
+                chart.options.scales.yAxes[0].ticks.fontColor = black;
+                chart.options.scales.xAxes[0].ticks.fontColor = black;
+                console.log("after changing axes to black (for a light background):", chart.options.scales.yAxes)
+
+                chart.data.datasets[0].borderColor = perfectPrimaryLight;
+                chart.data.datasets[0].backgroundColor = perfectSecondaryLight;
+
+                chart.data.datasets[1].borderColor = myPrimaryLight;
+                chart.data.datasets[1].backgroundColor = mySecondaryLight;
+
+                
+                chart.update();
             }
-        }
 
-        const c = new Chart(ctx, {
-            type: 'line',
-            data: data,
-            options: options
-        });
-    </script>
+            function updateToDark(chart) {
+                console.log('Updating to dark…')
+                chart.options.legend.labels.fontColor = white;
+
+                console.log("before changing axes to white (for a dark background):", chart.options.scales.yAxes)
+                chart.options.scales.yAxes[0].ticks.fontColor = white;
+                chart.options.scales.xAxes[0].ticks.fontColor = white;
+                console.log("after changing axes to white (for a dark background):", chart.options.scales.yAxes)
+
+                chart.data.datasets[0].borderColor = perfectPrimaryDark;
+                chart.data.datasets[0].backgroundColor = perfectSecondaryDark;
+
+                chart.data.datasets[1].borderColor = myPrimaryDark;
+                chart.data.datasets[1].backgroundColor = mySecondaryDark;
+
+                
+                chart.update();
+            }
+
+
+            const ctx = document.getElementById('myChart').getContext('2d');
+            const data = {
+                datasets: [{
+                    label: 'Perfect-calibration dataset',
+                    data: {{ .PerfectData }},
+                }, {
+                    label: 'My predictions',
+                    data: {{ .GuessData }}
+                }]
+            };
+            
+            const options = {
+                title: {
+                    display: false,
+                    text: 'A Chart.js Scatter Chart'
+                },
+                scales: {
+                    yAxes: [{
+                        ticks: {
+                            min: 0,
+                            max: 1
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            min: 0,
+                            max: 1
+                        }
+                    }]
+                }
+            }
+
+            const c = new Chart(ctx, {
+                type: 'scatter',
+                data: data,
+                options: options
+            });
+
+            const query = window.matchMedia("(prefers-color-scheme: dark)");
+
+            function handlePrefersDarkChange(eventOrQueryList) {
+                console.log("eventOrQueryList is:", eventOrQueryList);
+                if (eventOrQueryList.matches) {
+                    updateToDark(c);
+                } else {
+                    updateToLight(c);
+                }
+            }
+
+            query.addListener(handlePrefersDarkChange)
+            handlePrefersDarkChange(query); // initial setup
+
+
+        </script>
+        <figcaption>Calibration chart. If your “My predictions” point is over the perfect-calibration point, that means you’re overconfident at that confidence interval. Contrariwise, if your “My predictions” point is under the perfect-calibration point, that means you’re underconfident at that confidence interval.</figcaption>
+    </figure>
 </section>
 {{ end }}
