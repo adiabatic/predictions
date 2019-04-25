@@ -46,6 +46,8 @@ go get github.com/stretchr/testify
 go get -u github.com/spf13/cobra/cobra
 go get -u gopkg.in/russross/blackfriday.v2
 go get github.com/xtgo/set
+go get -u github.com/gobuffalo/packr/v2/...
+go get -u github.com/gobuffalo/packr/v2/packr2
 ```
 
 ## Prior art

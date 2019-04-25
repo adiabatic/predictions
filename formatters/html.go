@@ -18,12 +18,12 @@ import (
 	"fmt"
 	"html/template"
 	"io"
-	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/adiabatic/predictions/analyze"
 	"github.com/adiabatic/predictions/streams"
+	"github.com/gobuffalo/packr/v2"
 	"gopkg.in/russross/blackfriday.v2"
 )
 
@@ -79,7 +79,9 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 
 	var p payload
 
-	bs, err := ioutil.ReadFile("Chart.min.js")
+	box := packr.New("everything", "../templates")
+
+	bs, err := box.Find("Chart.min.js")
 	if err != nil {
 		panic("could not load Chart.min.js")
 	}
@@ -142,7 +144,12 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 	addPerfectData(&p)
 	addGuessData(&p)
 
-	t := template.Must(template.New("template").Funcs(funcs).ParseFiles("template.html"))
+	templateQuaString, err := box.FindString("template.html")
+	if err != nil {
+		panic("could not load template.html")
+	}
+
+	t := template.Must(template.New("").Funcs(funcs).Parse(templateQuaString))
 	return t.Execute(w, p)
 }
 
