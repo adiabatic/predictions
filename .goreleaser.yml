@@ -13,19 +13,19 @@ builds:
   goos: [darwin, freebsd, linux, windows]
   goarch: [amd64]
 
-archive:
-  replacements:
-    darwin: macOS
-    amd64: x86_64
+archives:
+  - replacements:
+      darwin: macOS
+      amd64: x86_64
 
-  format_overrides:
-  - goos: windows
-    format: zip
-  
-  files:
-  - LICENSE*
-  - README*
-  - doc/*
+    format_overrides:
+    - goos: windows
+      format: zip
+    
+    files:
+    - LICENSE*
+    - README*
+    - doc/*
 
 checksum:
   name_template: 'checksums.txt'
