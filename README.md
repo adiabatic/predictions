@@ -7,6 +7,14 @@ Not sure what this whole ‘predictions’ thing is? Have a look at [Scott Alexa
 [yaml]: https://en.wikipedia.org/wiki/YAML "YAML Ain’t Markup Language"
 [ssc2018]: https://slatestarcodex.com/2019/01/22/2018-predictions-calibration-results/
 
+## Building
+
+Have [go][] installed. Simply run `go build` in the project directory to build `predictions`, and then type `./predictions` to run the binary. You can place this binary elsewhere (`~/bin/`, say) if you like.
+
+`predictions` should also work just fine if you’re set up to run binaries from wherever `go install` places things.
+
+[go]: https://golang.org/dl/
+
 ## Usage
 
 To get a nicely-formatted HTML page analyzing your predictions, run `predictions publish html foo.yaml > out.html`.
