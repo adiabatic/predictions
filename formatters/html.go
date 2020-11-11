@@ -83,8 +83,22 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 	//	box := packr.New("everything", "../templates")
 	// box := pkger.Include("../templates")
 	// 	bs, err := box.Find("Chart.min.js")
-	pkger.Include("templates/")
-	f, err := pkger.Open("Chart.min.js")
+
+	pkger.Include("/templates")
+
+	err := pkger.Walk("/templates", func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		fmt.Println(path)
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Println("blah")
+
+	f, err := pkger.Open("/templates/Chart.min.js")
 	if err != nil {
 		panic("could not load Chart.min.js")
 	}
@@ -152,7 +166,7 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 	addPerfectData(&p)
 	addGuessData(&p)
 
-	templateF, err := pkger.Open("template.html")
+	templateF, err := pkger.Open("/templates/template.html")
 	if err != nil {
 		panic("could not open template.html")
 	}
