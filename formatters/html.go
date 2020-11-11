@@ -24,7 +24,7 @@ import (
 	"github.com/adiabatic/predictions/analyze"
 	"github.com/adiabatic/predictions/streams"
 	"github.com/gobuffalo/packr/v2"
-	"gopkg.in/russross/blackfriday.v2"
+	"github.com/russross/blackfriday"
 )
 
 type payload struct {
