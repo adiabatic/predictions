@@ -80,23 +80,7 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 
 	var p payload
 
-	//	box := packr.New("everything", "../templates")
-	// box := pkger.Include("../templates")
-	// 	bs, err := box.Find("Chart.min.js")
-
 	pkger.Include("/templates")
-
-	err := pkger.Walk("/templates", func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		fmt.Println(path)
-		return nil
-	})
-	if err != nil {
-		return err
-	}
-	fmt.Println("blah")
 
 	f, err := pkger.Open("/templates/Chart.min.js")
 	if err != nil {
@@ -171,7 +155,7 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 		panic("could not open template.html")
 	}
 
-	templateBytes, err := ioutil.ReadAll((templateF))
+	templateBytes, err := ioutil.ReadAll(templateF)
 	if err != nil {
 		panic("could not read all the bytes of template.html")
 	}
