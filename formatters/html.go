@@ -18,12 +18,13 @@ import (
 	"fmt"
 	"html/template"
 	"io"
+	"io/ioutil"
 	"os"
 	"strings"
 
 	"github.com/adiabatic/predictions/analyze"
 	"github.com/adiabatic/predictions/streams"
-	"github.com/gobuffalo/packr/v2"
+	"github.com/markbates/pkger"
 	"github.com/russross/blackfriday/v2"
 )
 
@@ -79,11 +80,18 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 
 	var p payload
 
-	box := packr.New("everything", "../templates")
-
-	bs, err := box.Find("Chart.min.js")
+	//	box := packr.New("everything", "../templates")
+	// box := pkger.Include("../templates")
+	// 	bs, err := box.Find("Chart.min.js")
+	pkger.Include("templates/")
+	f, err := pkger.Open("Chart.min.js")
 	if err != nil {
 		panic("could not load Chart.min.js")
+	}
+
+	bs, err := ioutil.ReadAll(f)
+	if err != nil {
+		panic("could not read bytes from Chart.min.js")
 	}
 
 	p.ChartJS = template.JS(bs)
@@ -144,7 +152,18 @@ func HTMLFromStreams(w io.Writer, sts []streams.Stream) error {
 	addPerfectData(&p)
 	addGuessData(&p)
 
-	templateQuaString, err := box.FindString("template.html")
+	templateF, err := pkger.Open("template.html")
+	if err != nil {
+		panic("could not open template.html")
+	}
+
+	templateBytes, err := ioutil.ReadAll((templateF))
+	if err != nil {
+		panic("could not read all the bytes of template.html")
+	}
+
+	templateQuaString := string(templateBytes)
+
 	if err != nil {
 		panic("could not load template.html")
 	}
